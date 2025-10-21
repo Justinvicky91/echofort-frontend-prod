@@ -3,6 +3,11 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 
+/**
+ * Minimal tRPC router - Frontend uses FastAPI backend at https://api.echofort.ai
+ * This router only handles auth for the Manus OAuth system
+ */
+
 export const appRouter = router({
   system: systemRouter,
 
@@ -16,13 +21,7 @@ export const appRouter = router({
       } as const;
     }),
   }),
-
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
 });
 
 export type AppRouter = typeof appRouter;
+
