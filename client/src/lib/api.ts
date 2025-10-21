@@ -52,10 +52,16 @@ async function fetchAPI<T>(
 // ==================== AUTH API ====================
 
 export const authAPI = {
-  sendOTP: (email: string) =>
+  sendOTP: (email: string, phone?: string) =>
     fetchAPI('/otp/send', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, phone }),
+    }),
+
+  signup: (data: any) =>
+    fetchAPI<{ token: string; user: any }>('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 
   verifyOTP: (email: string, otp: string) =>
