@@ -22,6 +22,12 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.id) {
     throw new Error("User ID is required for upsert");
   }
+  if (!user.name) {
+    throw new Error("User name is required for upsert");
+  }
+  if (!user.email) {
+    throw new Error("User email is required for upsert");
+  }
 
   const db = await getDb();
   if (!db) {
@@ -32,35 +38,41 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   try {
     const values: InsertUser = {
       id: user.id,
+      name: user.name,
+      email: user.email,
     };
-    const updateSet: Record<string, unknown> = {};
+    const updateSet: Record<string, unknown> = {
+      name: user.name,
+      email: user.email,
+    };
 
-    const textFields = ["name", "email", "loginMethod"] as const;
-    type TextField = (typeof textFields)[number];
+    const optionalFields = ["phone", "loginMethod", "department", "employeeId", "managerId", "deviceId", "deviceName"] as const;
+    type OptionalField = (typeof optionalFields)[number];
 
-    const assignNullable = (field: TextField) => {
+    const assignOptional = (field: OptionalField) => {
       const value = user[field];
-      if (value === undefined) return;
-      const normalized = value ?? null;
-      values[field] = normalized;
-      updateSet[field] = normalized;
+      if (value !== undefined) {
+        values[field] = value as any;
+        updateSet[field] = value;
+      }
     };
 
-    textFields.forEach(assignNullable);
+    optionalFields.forEach(assignOptional);
 
     if (user.lastSignedIn !== undefined) {
       values.lastSignedIn = user.lastSignedIn;
       updateSet.lastSignedIn = user.lastSignedIn;
     }
-    if (user.role === undefined) {
-      if (user.id === ENV.ownerId) {
-        user.role = 'admin';
-        values.role = 'admin';
-        updateSet.role = 'admin';
-      }
+    
+    if (user.role !== undefined) {
+      values.role = user.role;
+      updateSet.role = user.role;
+    } else if (user.id === ENV.ownerId) {
+      values.role = 'super_admin';
+      updateSet.role = 'super_admin';
     }
 
-    if (Object.keys(updateSet).length === 0) {
+    if (Object.keys(updateSet).length === 2) { // Only name and email
       updateSet.lastSignedIn = new Date();
     }
 
