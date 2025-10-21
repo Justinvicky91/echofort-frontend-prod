@@ -10,6 +10,9 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ScamCases from "./pages/ScamCases";
+import GPSTracking from "./pages/features/GPSTracking";
+import CallLogs from "./pages/features/CallLogs";
+import ScreenTime from "./pages/features/ScreenTime";
 import SuperAdminDashboard from "./pages/dashboard/SuperAdminDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import EmployeeDashboard from "./pages/dashboard/EmployeeDashboard";
@@ -29,6 +32,9 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/scam-cases" component={ScamCases} />
+      <Route path="/features/gps-tracking" component={GPSTracking} />
+      <Route path="/features/call-logs" component={CallLogs} />
+      <Route path="/features/screen-time" component={ScreenTime} />
       <Route path="/dashboard/super-admin" component={SuperAdminDashboard} />
       <Route path="/dashboard/admin" component={AdminDashboard} />
       <Route path="/dashboard/employee" component={EmployeeDashboard} />
