@@ -7,38 +7,48 @@ import { useTheme } from "@/contexts/ThemeContext";
 const liveScams = [
   {
     title: "Digital Arrest Scam Alert",
-    description: "Supreme Court issues notice over fake judicial seals. Fraudsters impersonating officials.",
-    amount: "₹1.07 Cr",
+    description: "Mumbai cyber police arrest seven in ₹58 crore digital arrest fraud.",
+    amount: "₹58 Cr",
     time: "2 hours ago",
     severity: "critical",
+    link: "https://timesofindia.indiatimes.com/city/mumbai/mumbai-cyber-police-arrest-seven-in-digital-arrest-scam-involving-rs-58cr-fraud/articleshow/124609701.cms",
+    source: "Times of India"
   },
   {
-    title: "Paytm Investment Scam",
-    description: "Bengaluru techie loses ₹23 lakh in fake Paytm Money investment scheme.",
-    amount: "₹23 Lakh",
+    title: "Doctor Loses Money in Digital Arrest",
+    description: "Maharashtra doctor loses over ₹7 crore in digital arrest scam.",
+    amount: "₹7 Cr",
+    time: "6 days ago",
+    severity: "high",
+    link: "https://www.ndtv.com/india-news/maharashtra-doctor-loses-over-rs-7-crore-in-digital-arrest-scam-9460583",
+    source: "NDTV"
+  },
+  {
+    title: "Online Trading Scam Busted",
+    description: "Man held for ₹3 crore online trading scam in Telangana.",
+    amount: "₹3 Cr",
     time: "2 days ago",
     severity: "high",
+    link: "https://www.newindianexpress.com/states/telangana/2025/Oct/20/man-held-for-rs-3-crore-online-trading-scam-in-telangana",
+    source: "New Indian Express"
   },
   {
-    title: "WhatsApp Trading Scam",
-    description: "Pune cybersecurity expert duped of ₹73 lakh through WhatsApp trading fraud.",
-    amount: "₹73 Lakh",
-    time: "3 days ago",
-    severity: "high",
-  },
-  {
-    title: "Fake India Post SMS",
-    description: "PIB warns about fake India Post messages asking for address updates.",
+    title: "Deep Fake Investment Scam",
+    description: "Four arrested in cyber frauds using deep fake of analysts.",
     amount: "Multiple victims",
-    time: "1 day ago",
+    time: "3 days ago",
     severity: "medium",
+    link: "https://www.hindustantimes.com/cities/mumbai-news/four-arrested-in-cyber-frauds-using-deep-fake-of-analysts-101760813870071.html",
+    source: "Hindustan Times"
   },
   {
     title: "Digital Diwali Scam Wave",
-    description: "Hyderabad Police warn of surge in online scams targeting festival shoppers.",
+    description: "Police issue urgent warning over Digital Diwali scam wave.",
     amount: "Widespread",
-    time: "10 hours ago",
+    time: "Today",
     severity: "high",
+    link: "https://bwsecurityworld.com/technology/police-issue-urgent-warning-over-digital-diwali-scam-wave/",
+    source: "BW Security World"
   },
 ];
 
@@ -114,7 +124,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <img src="/logo.png" alt="EchoFort" className="w-10 h-10" />
+                <img src="/logo.png" alt="EchoFort" className="w-16 h-16" />
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
               </div>
               <div>
@@ -157,7 +167,7 @@ export default function Home() {
               <Bell className="w-5 h-5 text-red-500 animate-pulse" />
               <div>
                 <h3 className="font-semibold text-sm">Live Scam Alerts</h3>
-                <p className="text-xs text-muted-foreground">{currentDate}</p>
+                <p className="text-xs text-muted-foreground">Auto-updates every 12hrs</p>
               </div>
             </div>
             <button onClick={() => setShowScamSidebar(false)} className="p-1 hover:bg-muted rounded">
@@ -166,9 +176,12 @@ export default function Home() {
           </div>
           <div className="p-4 space-y-4">
             {liveScams.map((scam, index) => (
-              <div
+              <a
                 key={index}
-                className={`p-3 rounded-lg border-l-4 ${
+                href={scam.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`block p-3 rounded-lg border-l-4 hover:shadow-md transition-all ${
                   scam.severity === 'critical'
                     ? 'border-red-500 bg-red-50 dark:bg-red-950/20'
                     : scam.severity === 'high'
@@ -183,9 +196,9 @@ export default function Home() {
                 <p className="text-xs text-muted-foreground mb-2">{scam.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-red-600">{scam.amount}</span>
-                  <TrendingUp className="w-4 h-4 text-red-500" />
+                  <span className="text-xs font-medium">{scam.source} →</span>
                 </div>
-              </div>
+              </a>
             ))}
             <div className="text-center pt-4">
               <Link href="/scam-database">
