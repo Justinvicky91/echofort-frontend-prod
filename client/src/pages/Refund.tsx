@@ -13,7 +13,7 @@ export default function Refund() {
           <div className="flex items-center justify-between">
             <Link href="/">
               <div className="flex items-center gap-3 cursor-pointer">
-                <img src="/logo.png" alt="EchoFort" className="w-8 h-8" />
+                <img src="/logo.png" alt="EchoFort" className="w-12 h-12" />
                 <div>
                   <span className="text-xl font-bold gradient-text block">EchoFort</span>
                 </div>

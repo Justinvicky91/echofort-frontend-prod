@@ -357,37 +357,37 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: <Phone className="w-8 h-8" />,
+                icon: <Phone className="w-12 h-12" />,
                 title: "AI Call Screening",
                 description: "Real-time analysis of incoming calls with Trust Factor scoring (0-10) to identify scams before you answer.",
                 color: "text-blue-500",
               },
               {
-                icon: <Shield className="w-8 h-8" />,
+                icon: <Shield className="w-12 h-12" />,
                 title: "Scam Database",
                 description: "Access to 125,000+ known scam numbers and patterns reported across India, constantly updated.",
                 color: "text-green-500",
               },
               {
-                icon: <MapPin className="w-8 h-8" />,
+                icon: <MapPin className="w-12 h-12" />,
                 title: "GPS Tracking",
                 description: "Real-time location tracking for family members with geofencing alerts and 30-day history.",
                 color: "text-purple-500",
               },
               {
-                icon: <Clock className="w-8 h-8" />,
+                icon: <Clock className="w-12 h-12" />,
                 title: "Screen Time Monitoring",
                 description: "Track app usage, set time limits, and get addiction risk assessments for children.",
                 color: "text-orange-500",
               },
               {
-                icon: <AlertTriangle className="w-8 h-8" />,
+                icon: <AlertTriangle className="w-12 h-12" />,
                 title: "Image Scanning",
                 description: "AI-powered scanning of QR codes, documents, and images to detect phishing attempts.",
                 color: "text-red-500",
               },
               {
-                icon: <CheckCircle className="w-8 h-8" />,
+                icon: <CheckCircle className="w-12 h-12" />,
                 title: "Legal Assistance",
                 description: "Guided cybercrime complaint filing with automatic evidence attachment and case tracking.",
                 color: "text-teal-500",

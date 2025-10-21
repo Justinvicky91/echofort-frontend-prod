@@ -30,7 +30,7 @@ export default function Contact() {
           <div className="flex items-center justify-between">
             <Link href="/">
               <div className="flex items-center gap-3 cursor-pointer">
-                <img src="/logo.png" alt="EchoFort" className="w-8 h-8" />
+                <img src="/logo.png" alt="EchoFort" className="w-12 h-12" />
                 <span className="text-xl font-bold gradient-text">EchoFort</span>
               </div>
             </Link>
@@ -109,10 +109,10 @@ export default function Contact() {
                       <Phone className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold mb-1">Phone Support</h3>
-                      <p className="text-muted-foreground text-sm mb-2">Available 24/7 for urgent matters</p>
-                      <a href="tel:+911800123456" className="text-primary hover:underline">
-                        +91 1800-123-456
+                      <h3 className="font-semibold mb-1">WhatsApp Support</h3>
+                      <p className="text-muted-foreground text-sm mb-2">Mon-Sat, 9 AM - 7 PM IST</p>
+                      <a href="https://wa.me/919361440568" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        +91 936 144 0568
                       </a>
                     </div>
                   </div>
