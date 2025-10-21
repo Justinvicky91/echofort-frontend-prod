@@ -36,7 +36,7 @@ export default function EmployeeManagement() {
     }
   };
 
-  const handleAddEmployee = async (formData) => {
+  const handleAddEmployee = async (formData: any) => {
     try {
       await api.createEmployee(formData);
       fetchEmployees();
@@ -46,7 +46,7 @@ export default function EmployeeManagement() {
     }
   };
 
-  const handleResetPassword = async (id) => {
+  const handleResetPassword = async (id: any) => {
     const newPassword = prompt('Enter new password:');
     if (!newPassword) return;
 
@@ -58,7 +58,7 @@ export default function EmployeeManagement() {
     }
   };
 
-  const handleDeleteEmployee = async (id) => {
+  const handleDeleteEmployee = async (id: any) => {
     if (!window.confirm('Are you sure you want to delete this employee?')) return;
 
     try {

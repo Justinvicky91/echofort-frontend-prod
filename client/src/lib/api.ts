@@ -36,6 +36,27 @@ class ApiService {
   }
 
   // Auth
+  auth = {
+    signup: async (data: any) => {
+      return this.request('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+    },
+    sendOTP: async (email: string) => {
+      return this.request('/auth/otp/send', {
+        method: 'POST',
+        body: JSON.stringify({ email })
+      });
+    },
+    verifyOTP: async (email: string, otp: string) => {
+      return this.request('/auth/otp/verify', {
+        method: 'POST',
+        body: JSON.stringify({ email, otp })
+      });
+    }
+  };
+
   async initiateLogin(identifier: string) {
     return this.request('/auth/unified/login/initiate', {
       method: 'POST',
@@ -216,6 +237,10 @@ class ApiService {
   }
 
   // Marketing
+  async getMarketingStats() {
+    return this.request('/admin/marketing/stats');
+  }
+
   async createCampaign(data: any) {
     return this.request('/admin/marketing/campaign/create', {
       method: 'POST',
@@ -259,6 +284,22 @@ class ApiService {
     });
   }
 
+  // Payment
+  payment = {
+    createOrder: async (amount: number) => {
+      return this.request('/api/payment/create-order', {
+        method: 'POST',
+        body: JSON.stringify({ amount })
+      });
+    },
+    verifyPayment: async (paymentData: any) => {
+      return this.request('/api/payment/verify', {
+        method: 'POST',
+        body: JSON.stringify(paymentData)
+      });
+    }
+  };
+
   // Audit
   async getAuditLogs() {
     return this.request('/admin/audit/logs');
@@ -296,6 +337,10 @@ class ApiService {
   }
 
   // Accounting
+  async getRecentTransactions() {
+    return this.request('/admin/accounting/transactions/recent');
+  }
+
   async getAccountingStats() {
     return this.request('/admin/accounting/stats');
   }
@@ -335,6 +380,10 @@ class ApiService {
   }
 
   // Customer Dashboard
+  async getRecentCalls() {
+    return this.request('/api/customer/recent-calls');
+  }
+
   async getCustomerStats() {
     return this.request('/api/customer/stats');
   }

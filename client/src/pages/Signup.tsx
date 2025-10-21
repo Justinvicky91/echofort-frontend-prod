@@ -100,7 +100,7 @@ export default function Signup() {
     setError("");
     
     try {
-      await api.auth.sendOTP(formData.email, formData.phone);
+      await api.auth.sendOTP(formData.email);
       setSuccess("OTP sent to your email and phone!");
       setStep(3);
     } catch (err: any) {

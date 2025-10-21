@@ -51,11 +51,7 @@ export default function RazorpayPayment({
 
     try {
       // Create order on backend
-      const orderResponse = await api.payment.createOrder(
-        amount * 100, // Convert to paise
-        planId,
-        'razorpay'
-      );
+      const orderResponse = await api.payment.createOrder(amount * 100); // Convert to paise
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_xxxxxx", // Replace with actual key
@@ -68,11 +64,11 @@ export default function RazorpayPayment({
         handler: async function (response: any) {
           try {
             // Verify payment on backend
-            const verifyResponse = await api.payment.verifyPayment(
-              response.razorpay_payment_id,
-              response.razorpay_order_id,
-              response.razorpay_signature
-            );
+            const verifyResponse = await api.payment.verifyPayment({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
 
             if (verifyResponse.success) {
               toast.success("Payment successful! Your 24-hour free trial has started.");
