@@ -1,17 +1,63 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, Phone, MapPin, Clock, AlertTriangle, CheckCircle, ArrowRight, Play } from "lucide-react";
+import { Shield, Phone, MapPin, Clock, AlertTriangle, CheckCircle, ArrowRight, Play, Sun, Moon, Monitor, Bell, TrendingUp, X } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
+
+const liveScams = [
+  {
+    title: "Digital Arrest Scam Alert",
+    description: "Supreme Court issues notice over fake judicial seals. Fraudsters impersonating officials.",
+    amount: "₹1.07 Cr",
+    time: "2 hours ago",
+    severity: "critical",
+  },
+  {
+    title: "Paytm Investment Scam",
+    description: "Bengaluru techie loses ₹23 lakh in fake Paytm Money investment scheme.",
+    amount: "₹23 Lakh",
+    time: "2 days ago",
+    severity: "high",
+  },
+  {
+    title: "WhatsApp Trading Scam",
+    description: "Pune cybersecurity expert duped of ₹73 lakh through WhatsApp trading fraud.",
+    amount: "₹73 Lakh",
+    time: "3 days ago",
+    severity: "high",
+  },
+  {
+    title: "Fake India Post SMS",
+    description: "PIB warns about fake India Post messages asking for address updates.",
+    amount: "Multiple victims",
+    time: "1 day ago",
+    severity: "medium",
+  },
+  {
+    title: "Digital Diwali Scam Wave",
+    description: "Hyderabad Police warn of surge in online scams targeting festival shoppers.",
+    amount: "Widespread",
+    time: "10 hours ago",
+    severity: "high",
+  },
+];
 
 export default function Home() {
+  const { theme, setTheme } = useTheme();
   const [stats, setStats] = useState({
     usersProtected: 0,
     scamsBlocked: 0,
     moneySaved: 0,
   });
+  const [showScamSidebar, setShowScamSidebar] = useState(true);
+  const [currentDate] = useState(new Date().toLocaleDateString('en-IN', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  }));
 
   useEffect(() => {
-    // Animate numbers on load
     const animateValue = (start: number, end: number, duration: number, setter: (val: number) => void) => {
       const startTime = Date.now();
       const animate = () => {
@@ -31,6 +77,32 @@ export default function Home() {
     animateValue(0, 150, 2000, (val) => setStats(s => ({ ...s, moneySaved: val })));
   }, []);
 
+  const ThemeToggle = () => (
+    <div className="flex items-center gap-2 p-1 bg-muted rounded-lg">
+      <button
+        onClick={() => setTheme('light')}
+        className={`p-2 rounded ${theme === 'light' ? 'bg-background shadow-sm' : ''}`}
+        title="Light mode"
+      >
+        <Sun className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setTheme('dark')}
+        className={`p-2 rounded ${theme === 'dark' ? 'bg-background shadow-sm' : ''}`}
+        title="Dark mode"
+      >
+        <Moon className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setTheme('system')}
+        className={`p-2 rounded ${theme === 'system' ? 'bg-background shadow-sm' : ''}`}
+        title="System mode"
+      >
+        <Monitor className="w-4 h-4" />
+      </button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen">
       {/* Animated Background */}
@@ -41,8 +113,14 @@ export default function Home() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Shield className="w-8 h-8 text-primary shield-icon" />
-              <span className="text-2xl font-bold gradient-text">EchoFort</span>
+              <div className="relative">
+                <img src="/logo.png" alt="EchoFort" className="w-10 h-10" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+              </div>
+              <div>
+                <span className="text-2xl font-bold gradient-text block">EchoFort</span>
+                <span className="text-xs text-muted-foreground">AI-Powered Protection</span>
+              </div>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <Link href="/features" className="text-foreground/80 hover:text-foreground transition-colors">
@@ -59,6 +137,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <Link href="/login">
                 <Button variant="ghost">Login</Button>
               </Link>
@@ -70,8 +149,68 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* Live Scam Alert Sidebar */}
+      {showScamSidebar && (
+        <div className="fixed right-0 top-20 bottom-0 w-80 glass-card border-l z-40 overflow-y-auto">
+          <div className="p-4 border-b flex items-center justify-between sticky top-0 bg-background/95 backdrop-blur">
+            <div className="flex items-center gap-2">
+              <Bell className="w-5 h-5 text-red-500 animate-pulse" />
+              <div>
+                <h3 className="font-semibold text-sm">Live Scam Alerts</h3>
+                <p className="text-xs text-muted-foreground">{currentDate}</p>
+              </div>
+            </div>
+            <button onClick={() => setShowScamSidebar(false)} className="p-1 hover:bg-muted rounded">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="p-4 space-y-4">
+            {liveScams.map((scam, index) => (
+              <div
+                key={index}
+                className={`p-3 rounded-lg border-l-4 ${
+                  scam.severity === 'critical'
+                    ? 'border-red-500 bg-red-50 dark:bg-red-950/20'
+                    : scam.severity === 'high'
+                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20'
+                    : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-sm">{scam.title}</h4>
+                  <span className="text-xs text-muted-foreground">{scam.time}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-2">{scam.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-red-600">{scam.amount}</span>
+                  <TrendingUp className="w-4 h-4 text-red-500" />
+                </div>
+              </div>
+            ))}
+            <div className="text-center pt-4">
+              <Link href="/scam-database">
+                <Button variant="outline" size="sm" className="w-full">
+                  View All Scams
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toggle Scam Sidebar Button (when hidden) */}
+      {!showScamSidebar && (
+        <button
+          onClick={() => setShowScamSidebar(true)}
+          className="fixed right-4 top-24 z-40 p-3 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-all"
+        >
+          <Bell className="w-5 h-5 animate-pulse" />
+        </button>
+      )}
+
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
+      <section className="pt-32 pb-20 px-6" style={{ marginRight: showScamSidebar ? '320px' : '0' }}>
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="fade-in">
@@ -113,7 +252,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Image / Animation */}
+            {/* Hero Demo Card */}
             <div className="relative">
               <div className="glass-card p-8 rounded-2xl">
                 <div className="flex items-center justify-between mb-6">
@@ -147,8 +286,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Video Demo Section */}
+      <section className="py-16 px-6" style={{ marginRight: showScamSidebar ? '320px' : '0' }}>
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              See <span className="gradient-text">EchoFort</span> in Action
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Watch how our AI protects you from scams in real-time
+            </p>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <div className="relative aspect-video rounded-2xl overflow-hidden glass-card">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-purple-500/20">
+                <Button size="lg" className="btn-hover-lift">
+                  <Play className="mr-2 w-6 h-6" />
+                  Play Demo Video
+                </Button>
+              </div>
+              {/* Placeholder for video - replace with actual video embed */}
+              <div className="absolute bottom-4 left-4 right-4 glass-card p-4 rounded-lg">
+                <p className="text-sm font-medium">🎬 Real scam call demonstration</p>
+                <p className="text-xs text-muted-foreground">See how EchoFort AI identifies and blocks scammers</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
-      <section className="py-16 px-6 bg-muted/30">
+      <section className="py-16 px-6 bg-muted/30" style={{ marginRight: showScamSidebar ? '320px' : '0' }}>
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center stagger-item">
@@ -174,7 +342,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6" style={{ marginRight: showScamSidebar ? '320px' : '0' }}>
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
@@ -236,7 +404,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-primary text-primary-foreground">
+      <section className="py-20 px-6 bg-primary text-primary-foreground" style={{ marginRight: showScamSidebar ? '320px' : '0' }}>
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold mb-4">
             Ready to Protect Your Family?
@@ -261,13 +429,16 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-muted/30">
+      <footer className="py-12 px-6 bg-muted/30" style={{ marginRight: showScamSidebar ? '320px' : '0' }}>
         <div className="container mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Shield className="w-6 h-6 text-primary" />
-                <span className="text-xl font-bold">EchoFort</span>
+                <img src="/logo.png" alt="EchoFort" className="w-6 h-6" />
+                <div>
+                  <span className="text-xl font-bold block">EchoFort</span>
+                  <span className="text-xs text-muted-foreground">AI-Powered Protection</span>
+                </div>
               </div>
               <p className="text-sm text-muted-foreground">
                 India's first AI-powered self-evolving scam protection platform.
