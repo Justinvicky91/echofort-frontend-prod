@@ -1,345 +1,364 @@
-/**
- * EchoFort API Service
- * Connects to FastAPI backend at https://api.echofort.ai
- */
+// API Service for EchoFort Backend
+const API_URL = 'https://echofort-backend-production.up.railway.app';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.echofort.ai';
-
-class APIError extends Error {
-  constructor(public status: number, message: string, public data?: any) {
-    super(message);
-    this.name = 'APIError';
-  }
-}
-
-async function fetchAPI<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string> || {}),
-  };
-
-  // Add auth token if available
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+class ApiService {
+  private getHeaders(): HeadersInit {
+    const token = localStorage.getItem('auth_token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    };
   }
 
-  try {
-    const response = await fetch(url, {
+  async request(endpoint: string, options: RequestInit = {}) {
+    const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
-      headers,
+      headers: {
+        ...this.getHeaders(),
+        ...options.headers
+      }
     });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Request failed' }));
-      throw new APIError(response.status, error.detail || 'Request failed', error);
+    if (response.status === 401) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+      throw new Error('Unauthorized');
     }
 
-    return await response.json();
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || 'Request failed');
     }
-    throw new APIError(0, 'Network error', error);
+
+    return data;
+  }
+
+  // Auth
+  async initiateLogin(identifier: string) {
+    return this.request('/auth/unified/login/initiate', {
+      method: 'POST',
+      body: JSON.stringify({ identifier })
+    });
+  }
+
+  async verifyLogin(payload: any) {
+    return this.request('/auth/unified/login/verify', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  // Employee Management
+  async getEmployees() {
+    return this.request('/admin/employees/list');
+  }
+
+  async createEmployee(data: any) {
+    return this.request('/admin/employees/create', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async updateEmployee(id: number, data: any) {
+    return this.request(`/admin/employees/${id}/update`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async resetEmployeePassword(id: number, newPassword: string) {
+    return this.request(`/admin/employees/${id}/reset-password`, {
+      method: 'POST',
+      body: JSON.stringify({ new_password: newPassword })
+    });
+  }
+
+  async deleteEmployee(id: number) {
+    return this.request(`/admin/employees/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // Payment Gateways
+  async getPaymentGateways() {
+    return this.request('/admin/payment-gateways/list');
+  }
+
+  async configurePaymentGateway(data: any) {
+    return this.request('/admin/payment-gateways/configure', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async updatePaymentGateway(id: number, data: any) {
+    return this.request(`/admin/payment-gateways/${id}/update`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async testPaymentGateway(id: number) {
+    return this.request(`/admin/payment-gateways/${id}/test`, {
+      method: 'POST'
+    });
+  }
+
+  // Call Recording Vault
+  async setVaultPassword(password: string) {
+    return this.request('/admin/vault/set-password', {
+      method: 'POST',
+      body: JSON.stringify({ vault_password: password })
+    });
+  }
+
+  async verifyVaultPassword(password: string) {
+    return this.request('/admin/vault/verify-password', {
+      method: 'POST',
+      body: JSON.stringify({ vault_password: password })
+    });
+  }
+
+  async getVaultRecordings(vaultPassword: string) {
+    return this.request(`/admin/vault/recordings/list?vault_password=${vaultPassword}`);
+  }
+
+  async deleteRecording(id: number, vaultPassword: string) {
+    return this.request(`/admin/vault/recordings/${id}?vault_password=${vaultPassword}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // Customer Exemptions
+  async getExemptions() {
+    return this.request('/admin/exemptions/list');
+  }
+
+  async grantExemption(data: any) {
+    return this.request('/admin/exemptions/grant', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async revokeExemption(userId: number) {
+    return this.request(`/admin/exemptions/revoke/${userId}`, {
+      method: 'POST'
+    });
+  }
+
+  async extendExemption(userId: number, additionalDays: number) {
+    return this.request(`/admin/exemptions/extend/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ additional_days: additionalDays })
+    });
+  }
+
+  // EchoFort AI
+  async sendAICommand(command: string) {
+    return this.request('/api/echofort-ai/command', {
+      method: 'POST',
+      body: JSON.stringify({ command })
+    });
+  }
+
+  async approveAITask(taskId: number, approved: boolean) {
+    return this.request('/api/echofort-ai/approve', {
+      method: 'POST',
+      body: JSON.stringify({ task_id: taskId, approved })
+    });
+  }
+
+  async getPendingAITasks() {
+    return this.request('/api/echofort-ai/pending-tasks');
+  }
+
+  async getAIInsights() {
+    return this.request('/api/ai-assistant/insights');
+  }
+
+  async chatWithAI(message: string) {
+    return this.request('/api/ai-assistant/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message })
+    });
+  }
+
+  // Dashboard Stats
+  async getDashboardStats() {
+    return this.request('/admin/dashboard/stats');
+  }
+
+  // Customers
+  async getCustomers() {
+    return this.request('/admin/customers/list');
+  }
+
+  async getCustomerDetails(id: number) {
+    return this.request(`/admin/customers/${id}/details`);
+  }
+
+  // Subscriptions
+  async getSubscriptions() {
+    return this.request('/admin/subscriptions/list');
+  }
+
+  // Threats
+  async getThreatDashboard() {
+    return this.request('/admin/threats/dashboard');
+  }
+
+  async getLiveThreats() {
+    return this.request('/admin/threats/live');
+  }
+
+  // Marketing
+  async createCampaign(data: any) {
+    return this.request('/admin/marketing/campaign/create', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async getCampaigns() {
+    return this.request('/admin/marketing/campaigns');
+  }
+
+  async getMarketingAnalytics() {
+    return this.request('/admin/marketing/analytics');
+  }
+
+  // P&L
+  async getMonthlyPL() {
+    return this.request('/admin/profit-loss/monthly');
+  }
+
+  async getYearlyPL() {
+    return this.request('/admin/profit-loss/yearly');
+  }
+
+  // Payroll
+  async getCurrentPayroll() {
+    return this.request('/admin/payroll/current');
+  }
+
+  async processPayroll() {
+    return this.request('/admin/payroll/process', {
+      method: 'POST'
+    });
+  }
+
+  // Database
+  async executeSQL(query: string) {
+    return this.request('/admin/execute-sql', {
+      method: 'POST',
+      body: JSON.stringify({ query })
+    });
+  }
+
+  // Audit
+  async getAuditLogs() {
+    return this.request('/admin/audit/logs');
+  }
+
+  // Support
+  async getSupportStats() {
+    return this.request('/admin/support/stats');
+  }
+
+  async getTickets(filters?: any) {
+    const params = filters ? `?${new URLSearchParams(filters).toString()}` : '';
+    return this.request(`/admin/support/tickets${params}`);
+  }
+
+  async assignTicket(ticketId: number, employeeId: number) {
+    return this.request('/admin/support/ticket/assign', {
+      method: 'POST',
+      body: JSON.stringify({ ticket_id: ticketId, employee_id: employeeId })
+    });
+  }
+
+  async updateTicketStatus(ticketId: number, status: string) {
+    return this.request(`/admin/support/ticket/${ticketId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status })
+    });
+  }
+
+  async addTicketNote(ticketId: number, note: string) {
+    return this.request(`/admin/support/ticket/${ticketId}/note`, {
+      method: 'POST',
+      body: JSON.stringify({ note })
+    });
+  }
+
+  // Accounting
+  async getAccountingStats() {
+    return this.request('/admin/accounting/stats');
+  }
+
+  async getRevenue(period: string) {
+    return this.request(`/admin/accounting/revenue?period=${period}`);
+  }
+
+  async getExpenses(period: string) {
+    return this.request(`/admin/accounting/expenses?period=${period}`);
+  }
+
+  // HR
+  async getHRStats() {
+    return this.request('/admin/hr/stats');
+  }
+
+  async getAttendance() {
+    return this.request('/admin/hr/attendance');
+  }
+
+  async getLeaveRequests() {
+    return this.request('/admin/hr/leave-requests');
+  }
+
+  async approveLeave(requestId: number) {
+    return this.request(`/admin/hr/leave/${requestId}/approve`, {
+      method: 'POST'
+    });
+  }
+
+  async rejectLeave(requestId: number, reason: string) {
+    return this.request(`/admin/hr/leave/${requestId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+  }
+
+  // Customer Dashboard
+  async getCustomerStats() {
+    return this.request('/api/customer/stats');
+  }
+
+  async getScamAlerts() {
+    return this.request('/api/customer/scam-alerts');
+  }
+
+  async getFamilyMembers() {
+    return this.request('/api/customer/family');
+  }
+
+  async getCallRecordings() {
+    return this.request('/api/customer/call-recordings');
+  }
+
+  async reportScam(data: any) {
+    return this.request('/api/customer/report-scam', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
   }
 }
 
-// ==================== AUTH API ====================
-
-export const authAPI = {
-  sendOTP: (email: string, phone?: string) =>
-    fetchAPI('/otp/send', {
-      method: 'POST',
-      body: JSON.stringify({ email, phone }),
-    }),
-
-  signup: (data: any) =>
-    fetchAPI<{ token: string; user: any }>('/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  verifyOTP: (email: string, otp: string) =>
-    fetchAPI<{ token: string; user: any }>('/otp/verify', {
-      method: 'POST',
-      body: JSON.stringify({ email, otp }),
-    }),
-
-  getMe: () =>
-    fetchAPI<any>('/auth/me'),
-
-  logout: () => {
-    localStorage.removeItem('auth_token');
-    return Promise.resolve();
-  },
-};
-
-// ==================== USER API ====================
-
-export const userAPI = {
-  getProfile: () =>
-    fetchAPI<any>('/user/profile'),
-
-  updateProfile: (data: any) =>
-    fetchAPI('/user/profile', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
-
-  getSubscription: () =>
-    fetchAPI<any>('/subscription/me'),
-
-  getCallLogs: (limit = 50, offset = 0) =>
-    fetchAPI<any[]>(`/calls?limit=${limit}&offset=${offset}`),
-
-  getNotifications: (unreadOnly = false) =>
-    fetchAPI<any[]>(`/notifications?unread_only=${unreadOnly}`),
-
-  markNotificationRead: (id: string) =>
-    fetchAPI(`/notifications/${id}/read`, { method: 'POST' }),
-};
-
-// ==================== SUBSCRIPTION API ====================
-
-export const subscriptionAPI = {
-  create: (plan: string, paymentGateway: string) =>
-    fetchAPI<any>('/subscription/create', {
-      method: 'POST',
-      body: JSON.stringify({ plan, payment_gateway: paymentGateway }),
-    }),
-
-  cancel: () =>
-    fetchAPI('/subscription/cancel', { method: 'POST' }),
-
-  upgrade: (newPlan: string) =>
-    fetchAPI('/subscription/upgrade', {
-      method: 'POST',
-      body: JSON.stringify({ new_plan: newPlan }),
-    }),
-
-  getPlans: () =>
-    fetchAPI<any[]>('/subscription/plans'),
-};
-
-// ==================== PAYMENT API ====================
-
-export const paymentAPI = {
-  createOrder: (amount: number, plan: string, gateway: string) =>
-    fetchAPI<any>('/payment/create-order', {
-      method: 'POST',
-      body: JSON.stringify({ amount, plan, gateway }),
-    }),
-
-  verifyPayment: (paymentId: string, orderId: string, signature?: string) =>
-    fetchAPI<any>('/payment/verify', {
-      method: 'POST',
-      body: JSON.stringify({ payment_id: paymentId, order_id: orderId, signature }),
-    }),
-
-  getHistory: (limit = 20) =>
-    fetchAPI<any[]>(`/payment/history?limit=${limit}`),
-};
-
-// ==================== FAMILY API ====================
-
-export const familyAPI = {
-  create: (familyName: string) =>
-    fetchAPI<any>('/family/create', {
-      method: 'POST',
-      body: JSON.stringify({ family_name: familyName }),
-    }),
-
-  getFamily: () =>
-    fetchAPI<any>('/family/me'),
-
-  addMember: (data: any) =>
-    fetchAPI<any>('/family/members', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  removeMember: (memberId: string) =>
-    fetchAPI(`/family/members/${memberId}`, { method: 'DELETE' }),
-
-  getLocations: (memberId?: string, hours = 24) =>
-    fetchAPI<any[]>(`/gps/locations?member_id=${memberId || ''}&hours=${hours}`),
-
-  getScreenTime: (memberId: string, days = 7) =>
-    fetchAPI<any[]>(`/screentime/${memberId}?days=${days}`),
-};
-
-// ==================== SCAM API ====================
-
-export const scamAPI = {
-  checkNumber: (phoneNumber: string) =>
-    fetchAPI<any>(`/scam/check?phone=${encodeURIComponent(phoneNumber)}`),
-
-  reportScam: (data: any) =>
-    fetchAPI<any>('/scam/report', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  getRecentScams: (limit = 10) =>
-    fetchAPI<any[]>(`/scam/recent?limit=${limit}`),
-};
-
-// ==================== IMAGE SCAN API ====================
-
-export const imageScanAPI = {
-  scanImage: (imageUrl: string) =>
-    fetchAPI<any>('/ai/image/scan', {
-      method: 'POST',
-      body: JSON.stringify({ image_url: imageUrl }),
-    }),
-
-  getHistory: (limit = 20) =>
-    fetchAPI<any[]>(`/ai/image/history?limit=${limit}`),
-};
-
-// ==================== LEGAL COMPLAINT API ====================
-
-export const legalAPI = {
-  createComplaint: (data: any) =>
-    fetchAPI<any>('/legal/complaint', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  getComplaints: () =>
-    fetchAPI<any[]>('/legal/complaints'),
-
-  updateComplaint: (id: string, data: any) =>
-    fetchAPI<any>(`/legal/complaint/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
-};
-
-// ==================== ADMIN API ====================
-
-export const adminAPI = {
-  getUsers: (limit = 50, offset = 0, role?: string) =>
-    fetchAPI<any[]>(`/admin/users?limit=${limit}&offset=${offset}${role ? `&role=${role}` : ''}`),
-
-  updateUser: (userId: string, data: any) =>
-    fetchAPI(`/admin/users/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
-
-  getAnalytics: () =>
-    fetchAPI<any>('/admin/analytics'),
-
-  getScamReports: (limit = 50, verified?: boolean) =>
-    fetchAPI<any[]>(`/admin/scams?limit=${limit}${verified !== undefined ? `&verified=${verified}` : ''}`),
-
-  verifyScam: (scamId: string, verified: boolean) =>
-    fetchAPI(`/admin/scams/${scamId}/verify`, {
-      method: 'POST',
-      body: JSON.stringify({ verified }),
-    }),
-
-  exportData: (type: string) =>
-    fetchAPI<any>(`/admin/export/${type}`),
-};
-
-// ==================== SUPER ADMIN API ====================
-
-export const superAdminAPI = {
-  getDashboard: () =>
-    fetchAPI<any>('/admin/dashboard'),
-
-  getRevenue: (startDate: string, endDate: string) =>
-    fetchAPI<any>(`/admin/revenue?start=${startDate}&end=${endDate}`),
-
-  getProfitLoss: (month: string) =>
-    fetchAPI<any>(`/admin/profit-loss?month=${month}`),
-
-  getInfraCosts: (months = 6) =>
-    fetchAPI<any[]>(`/admin/infra-costs?months=${months}`),
-
-  updateInfraCost: (month: string, data: any) =>
-    fetchAPI(`/admin/infra-costs/${month}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
-
-  getPayroll: (month: string) =>
-    fetchAPI<any[]>(`/admin/payroll?month=${month}`),
-
-  processPayroll: (data: any) =>
-    fetchAPI('/admin/payroll', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  getAuditLogs: (limit = 100, userId?: string, action?: string) =>
-    fetchAPI<any[]>(`/admin/audit?limit=${limit}${userId ? `&user_id=${userId}` : ''}${action ? `&action=${action}` : ''}`),
-
-  // EchoFort AI
-  askAI: (question: string, context?: string) =>
-    fetchAPI<{ answer: string }>('/ai-assistant/ask', {
-      method: 'POST',
-      body: JSON.stringify({ question, context }),
-    }),
-
-  getAIInsights: () =>
-    fetchAPI<any>('/ai-assistant/insights'),
-
-  executeSQL: (query: string, key: string) =>
-    fetchAPI<any>('/admin/execute-sql', {
-      method: 'POST',
-      body: JSON.stringify({ query, key }),
-    }),
-};
-
-// ==================== EMPLOYEE API ====================
-
-export const employeeAPI = {
-  getDashboard: () =>
-    fetchAPI<any>('/employee/dashboard'),
-
-  getTasks: () =>
-    fetchAPI<any[]>('/employee/tasks'),
-
-  updateTaskStatus: (taskId: string, status: string) =>
-    fetchAPI(`/employee/tasks/${taskId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ status }),
-    }),
-};
-
-// ==================== STATS API ====================
-
-export const statsAPI = {
-  getPlatformStats: () =>
-    fetchAPI<any>('/stats/platform'),
-
-  getTrustFactorDemo: (phoneNumber: string) =>
-    fetchAPI<any>(`/stats/trust-factor?phone=${encodeURIComponent(phoneNumber)}`),
-};
-
-// Export all APIs
-export const api = {
-  auth: authAPI,
-  user: userAPI,
-  subscription: subscriptionAPI,
-  payment: paymentAPI,
-  family: familyAPI,
-  scam: scamAPI,
-  imageScan: imageScanAPI,
-  legal: legalAPI,
-  admin: adminAPI,
-  superAdmin: superAdminAPI,
-  employee: employeeAPI,
-  stats: statsAPI,
-};
-
+export const api = new ApiService();
 export default api;
 
