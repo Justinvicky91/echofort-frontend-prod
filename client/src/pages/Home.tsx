@@ -243,7 +243,7 @@ export default function Home() {
               <div className="flex items-center gap-8 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>48-hour money-back guarantee</span>
+                  <span>24-hour money-back guarantee</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />

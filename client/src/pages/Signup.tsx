@@ -76,7 +76,7 @@ export default function Signup() {
             {[
               {
                 icon: <Shield className="w-6 h-6" />,
-                title: "48-Hour Free Trial",
+                title: "24-Hour Free Trial",
                 desc: "Full access to all features",
               },
               {
@@ -123,7 +123,7 @@ export default function Signup() {
           <div className="mb-8">
             <h2 className="text-3xl font-bold mb-2">Create Your Account</h2>
             <p className="text-muted-foreground">
-              Start your 48-hour free trial today
+              Start your 24-hour free trial today
             </p>
           </div>
 
@@ -190,6 +190,7 @@ export default function Signup() {
                   <Link href="/privacy" className="text-primary hover:underline">
                     Privacy Policy
                   </Link>
+                  . I consent that my data will be stored in EchoFort for future purposes.
                 </label>
               </div>
 
@@ -271,7 +272,7 @@ export default function Signup() {
 
           <div className="mt-8 p-4 bg-muted rounded-lg">
             <p className="text-sm text-center text-muted-foreground">
-              🎉 Start your 48-hour free trial. No credit card required.
+              🎉 Start your 24-hour free trial. No credit card required.
             </p>
           </div>
         </div>

@@ -9,20 +9,21 @@ const plans = [
     price: 399,
     description: "Essential scam protection for individuals",
     features: [
-      "AI Call Screening with Trust Factor",
+      "Real-time AI call screening",
+      "Trust Factor scoring (0-10)",
       "Access to 125,000+ Scam Database",
-      "Real-time Call Recording",
-      "Scam Number Reporting",
-      "Basic Call Analytics",
-      "Email Support",
-      "48-hour Money-back Guarantee",
+      "Voice pattern recognition",
+      "Keyword detection",
+      "Caller ID verification",
+      "24/7 customer support",
+      "24-hour Money-back Guarantee",
     ],
     notIncluded: [
-      "GPS Tracking",
-      "Screen Time Monitoring",
-      "Family Protection",
-      "Image Scanning",
-      "Legal Assistance",
+      "No call recording",
+      "No loan harassment protection",
+      "No image scanning",
+      "No GPS tracking",
+      "No child protection",
     ],
     popular: false,
     color: "border-border",
@@ -33,14 +34,16 @@ const plans = [
     description: "Complete protection with advanced features",
     features: [
       "Everything in Basic Plan",
-      "AI Image & QR Code Scanning",
-      "Advanced Call Analytics",
-      "Scam Pattern Detection",
-      "Legal Complaint Assistance",
-      "Priority Email Support",
-      "Cybercrime Report Filing",
-      "Evidence Management",
-      "30-day Call History",
+      "Auto call recording (ALL calls: normal + social + scam)",
+      "90 days call storage",
+      "Loan harassment protection",
+      "AI image & screenshot scanning (BEFORE download)",
+      "QR code scam detection",
+      "WhatsApp/Telegram message analysis (pre-download)",
+      "Email phishing detection",
+      "Legal complaint filing system",
+      "Priority customer support",
+      "Offline recording (auto-upload when online)",
     ],
     notIncluded: [
       "GPS Tracking",
@@ -56,17 +59,20 @@ const plans = [
     description: "Ultimate protection for your entire family",
     features: [
       "Everything in Personal Plan",
-      "GPS Tracking for 4 Family Members",
-      "Real-time Location Sharing",
-      "Geofencing Alerts",
-      "Screen Time Monitoring",
-      "App Usage Analytics",
-      "Addiction Risk Assessment",
-      "Child Protection Features",
-      "Family Dashboard",
-      "Dedicated Support",
-      "90-day Call History",
+      "Up to 4 family members/devices",
+      "Selective call recording (scam/harassment/threatening only)",
+      "90 days scam call storage",
+      "Real-time GPS family tracking",
+      "Geofencing & safe zone alerts",
+      "Child protection (18+ content filter)",
+      "YouTube Restricted Mode (locked)",
+      "Screen time tracking & WHO-standard limits",
+      "Automated screen time control",
+      "Gaming addiction alerts",
+      "Family dashboard (parental controls)",
+      "Priority phone support",
     ],
+    note: "Purchase person gets access to scam/harassment/threatening call history only. Normal calls not recorded for family members.",
     notIncluded: [],
     popular: false,
     color: "border-purple-500",
@@ -111,7 +117,7 @@ export default function Pricing() {
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Choose the plan that's right for you. All plans include GST. 
-            48-hour money-back guarantee on all plans.
+            24-hour money-back guarantee on all plans.
           </p>
 
           {/* Billing Toggle */}
@@ -198,6 +204,14 @@ export default function Pricing() {
                     </div>
                   ))}
                   
+                  {plan.note && (
+                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                      <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                        <strong>Note:</strong> {plan.note}
+                      </p>
+                    </div>
+                  )}
+                  
                   {plan.notIncluded.length > 0 && (
                     <>
                       <div className="border-t my-4" />
@@ -230,8 +244,8 @@ export default function Pricing() {
           <div className="space-y-6">
             {[
               {
-                q: "How does the 48-hour money-back guarantee work?",
-                a: "If you're not satisfied with EchoFort within 48 hours of purchase, simply contact our support team and we'll process a full refund, no questions asked.",
+                q: "How does the 24-hour money-back guarantee work?",
+                a: "If you're not satisfied with EchoFort within 24 hours of purchase, simply contact our support team and we'll process a full refund, no questions asked.",
               },
               {
                 q: "Can I upgrade or downgrade my plan?",
