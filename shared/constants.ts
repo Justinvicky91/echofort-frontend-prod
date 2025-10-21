@@ -13,6 +13,7 @@ export const SUBSCRIPTION_PLANS = {
       'Real-time call screening',
       'Trust Factor scoring (0-10)',
       'Scam database access (125,000+ numbers)',
+      'Digital Arrest Protection',
       'Voice pattern recognition',
       'Keyword detection',
       'Caller ID verification',
@@ -41,6 +42,9 @@ export const SUBSCRIPTION_PLANS = {
       'QR code scam detection',
       'WhatsApp/Telegram message analysis (pre-download)',
       'Email phishing detection',
+      'Auto-Alert System (Bank, Police, Cybercrime)',
+      'AI-drafted emails to authorities (user confirmation required)',
+      'Government ID verification at signup',
       'Legal complaint filing system',
       'Priority customer support',
       'Offline recording (auto-upload when online)',
@@ -63,13 +67,15 @@ export const SUBSCRIPTION_PLANS = {
       'Up to 4 family members/devices',
       'Selective call recording (scam/harassment/threatening only)',
       '90 days scam call storage',
-      'Real-time GPS family tracking',
+      'On-demand GPS family tracking (battery-efficient)',
       'Geofencing & safe zone alerts',
       'Child protection (18+ content filter)',
       'YouTube Restricted Mode (locked)',
       'Screen time tracking & WHO-standard limits',
       'Automated screen time control',
       'Gaming addiction alerts',
+      'Auto-Alert System (Global coverage)',
+      'AI-suggested department emails (region/district/country-specific)',
       'Family dashboard (parental controls)',
       'Priority phone support',
     ],
@@ -84,12 +90,38 @@ export const SUBSCRIPTION_PLANS = {
   },
 } as const;
 
+// Alert Departments by Region
+export const ALERT_DEPARTMENTS = {
+  INDIA: [
+    { name: 'National Cybercrime Reporting Portal', email: 'complaints@cybercrime.gov.in', url: 'https://cybercrime.gov.in' },
+    { name: 'Reserve Bank of India', email: 'rbi@rbi.org.in', url: 'https://rbi.org.in' },
+    { name: 'Local Police Station', email: 'police@{district}.gov.in', type: 'district' },
+    { name: 'Cyber Crime Cell', email: 'cybercrime@{state}.gov.in', type: 'state' },
+    { name: 'User Bank', email: '{bank}@bank.com', type: 'user_bank' },
+  ],
+  USA: [
+    { name: 'FBI Internet Crime Complaint Center (IC3)', email: 'ic3@fbi.gov', url: 'https://ic3.gov' },
+    { name: 'Federal Trade Commission', email: 'ftc@ftc.gov', url: 'https://ftc.gov' },
+    { name: 'Local Police Department', email: 'police@{city}.gov', type: 'city' },
+  ],
+  UK: [
+    { name: 'Action Fraud', email: 'report@actionfraud.police.uk', url: 'https://actionfraud.police.uk' },
+    { name: 'Financial Conduct Authority', email: 'consumer.queries@fca.org.uk', url: 'https://fca.org.uk' },
+  ],
+  GLOBAL: [
+    { name: 'INTERPOL', email: 'cybercrime@interpol.int', url: 'https://interpol.int' },
+    { name: 'Local Law Enforcement', email: 'police@{country}.gov', type: 'country' },
+    { name: 'Financial Regulatory Authority', email: 'fraud@{country}.gov', type: 'country' },
+  ],
+} as const;
+
 export const SCAM_TYPES = [
+  { value: 'digital_arrest', label: 'Digital Arrest / Fake Police' },
   { value: 'loan', label: 'Loan Harassment' },
   { value: 'lottery', label: 'Lottery/Prize Scam' },
   { value: 'phishing', label: 'Phishing' },
   { value: 'investment', label: 'Investment Fraud' },
-  { value: 'impersonation', label: 'Impersonation (Bank/Police)' },
+  { value: 'impersonation', label: 'Impersonation (Bank/Police/CBI/Court)' },
   { value: 'job', label: 'Job Scam' },
   { value: 'romance', label: 'Romance Scam' },
   { value: 'tech_support', label: 'Tech Support Scam' },
