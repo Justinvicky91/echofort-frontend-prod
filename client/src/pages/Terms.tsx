@@ -76,7 +76,7 @@ export default function Terms() {
                   <li><strong>Family Plan:</strong> ₹1,499/month (including GST)</li>
                 </ul>
                 <p className="mt-4">
-                  All plans include a 48-hour free trial. No credit card is required to start the trial.
+                  All plans include a 24-hour free trial. No credit card is required to start the trial.
                 </p>
               </section>
 
@@ -94,12 +94,12 @@ export default function Terms() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4">5. Refund Policy</h2>
                 <p className="mb-4">
-                  We offer a 48-hour money-back guarantee from the date of purchase:
+                  We offer a 24-hour money-back guarantee from the date of purchase:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Full refund if requested within 48 hours of initial subscription</li>
+                  <li>Full refund if requested within 24 hours of initial subscription</li>
                   <li>Refunds processed within 7-10 business days</li>
-                  <li>No refunds for partial months or after 48-hour window</li>
+                  <li>No refunds for partial months or after 24-hour window</li>
                   <li>Refunds issued to original payment method</li>
                 </ul>
               </section>
@@ -127,8 +127,17 @@ export default function Terms() {
                   <li>Information Technology Act, 2000</li>
                   <li>Our Privacy Policy (available separately)</li>
                 </ul>
+                <p className="mt-4 font-semibold">
+                  By signing up for EchoFort, you explicitly consent that your data will be stored in EchoFort for future purposes, including but not limited to:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 mt-2">
+                  <li>Service provision and improvement</li>
+                  <li>Legal compliance and court evidence (if required by law)</li>
+                  <li>Security and fraud prevention</li>
+                  <li>Customer support and communication</li>
+                </ul>
                 <p className="mt-4">
-                  By using our services, you consent to data collection as described in our Privacy Policy.
+                  For complete details on data handling, please refer to our Privacy Policy.
                 </p>
               </section>
 

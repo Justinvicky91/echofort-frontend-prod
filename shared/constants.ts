@@ -6,15 +6,17 @@
 export const SUBSCRIPTION_PLANS = {
   basic: {
     id: 'basic',
-    name: 'Basic Protection',
+    name: 'Basic',
     price: 399,
     currency: 'INR',
     features: [
       'Real-time call screening',
       'Trust Factor scoring (0-10)',
-      'Scam database access',
-      'Image scanning',
-      'Basic support',
+      'Scam database access (125,000+ numbers)',
+      'Voice pattern recognition',
+      'Keyword detection',
+      'Caller ID verification',
+      '24/7 customer support',
     ],
     limits: {
       members: 1,
@@ -24,18 +26,24 @@ export const SUBSCRIPTION_PLANS = {
       screenTime: false,
     },
   },
-  premium: {
-    id: 'premium',
-    name: 'Premium Plus',
+  personal: {
+    id: 'personal',
+    name: 'Personal',
     price: 799,
     currency: 'INR',
+    popular: true,
     features: [
-      'All Basic features',
-      'Call recording & playback',
-      'Dashboard access',
-      'Legal complaint assistance',
-      'Priority support',
-      'Evidence management',
+      'Everything in Basic Plan',
+      'Auto call recording (ALL calls: normal + social + scam)',
+      '90 days call storage',
+      'Loan harassment protection',
+      'AI image & screenshot scanning (BEFORE download)',
+      'QR code scam detection',
+      'WhatsApp/Telegram message analysis (pre-download)',
+      'Email phishing detection',
+      'Legal complaint filing system',
+      'Priority customer support',
+      'Offline recording (auto-upload when online)',
     ],
     limits: {
       members: 1,
@@ -47,21 +55,27 @@ export const SUBSCRIPTION_PLANS = {
   },
   family: {
     id: 'family',
-    name: 'Family Pack',
+    name: 'Family',
     price: 1499,
     currency: 'INR',
     features: [
-      'All Premium features',
-      'Up to 3 family members',
-      'GPS tracking & geofencing',
-      'Screen time monitoring',
-      'Child protection features',
-      'Family management dashboard',
-      'Addiction risk assessment',
-      'Dedicated support',
+      'Everything in Personal Plan',
+      'Up to 4 family members/devices',
+      'Selective call recording (scam/harassment/threatening only)',
+      '90 days scam call storage',
+      'Real-time GPS family tracking',
+      'Geofencing & safe zone alerts',
+      'Child protection (18+ content filter)',
+      'YouTube Restricted Mode (locked)',
+      'Screen time tracking & WHO-standard limits',
+      'Automated screen time control',
+      'Gaming addiction alerts',
+      'Family dashboard (parental controls)',
+      'Priority phone support',
     ],
+    note: 'Purchase person gets access to scam/harassment/threatening call history only. Normal calls not recorded for family members.',
     limits: {
-      members: 3,
+      members: 4,
       callRecording: true,
       dashboard: true,
       gps: true,
@@ -141,8 +155,8 @@ export const APP_CONFIG = {
   privacyEmail: 'privacy@echofort.ai',
   grievanceEmail: 'grievance@echofort.ai',
   helplineNumber: '1800-ECHOFORT',
-  moneyBackGuarantee: 48, // hours
-  trialPeriod: 7, // days
+  moneyBackGuarantee: 24, // hours - Changed from 48 to 24
+  trialPeriod: 24, // hours - Changed from 7 days to 24 hours
 } as const;
 
 export const FEATURE_HIGHLIGHTS = [
@@ -188,8 +202,8 @@ export const FAQ_ITEMS = [
     answer: 'Call recording laws vary by state in India. In most cases, you are allowed to record calls for personal use and evidence purposes. However, we recommend informing the other party that the call is being recorded. EchoFort provides call recording features for Premium Plus and Family Pack subscribers, but users are responsible for complying with applicable laws.',
   },
   {
-    question: 'What is the 48-hour money-back guarantee?',
-    answer: 'If you are not satisfied with EchoFort for any reason, you can request a full refund within 48 hours of your first subscription payment. Simply contact our support team at support@echofort.ai, and we will process your refund within 7-10 business days.',
+    question: 'What is the 24-hour money-back guarantee?',
+    answer: 'If you are not satisfied with EchoFort for any reason, you can request a full refund within 24 hours of your first subscription payment. Simply contact our support team at support@echofort.ai, and we will process your refund within 7-10 business days.',
   },
   {
     question: 'How does GPS tracking work in the Family Pack?',

@@ -42,8 +42,8 @@ export default function Refund() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4">1. 48-Hour Money-Back Guarantee</h2>
                 <p className="mb-4">
-                  We offer a 48-hour money-back guarantee on all subscription plans. If you're not satisfied 
-                  with EchoFort for any reason, you can request a full refund within 48 hours of your initial purchase.
+                  We offer a 24-hour money-back guarantee on all subscription plans. If you're not satisfied 
+                  with EchoFort for any reason, you can request a full refund within 24 hours of your initial purchase.
                 </p>
                 
                 <div className="grid md:grid-cols-2 gap-6 mt-6">
@@ -53,7 +53,7 @@ export default function Refund() {
                       <h3 className="font-semibold">Eligible for Refund</h3>
                     </div>
                     <ul className="space-y-2 text-sm">
-                      <li>• First-time subscription within 48 hours</li>
+                      <li>• First-time subscription within 24 hours</li>
                       <li>• No previous refund requests</li>
                       <li>• Account in good standing</li>
                       <li>• Request submitted through proper channels</li>
@@ -66,7 +66,7 @@ export default function Refund() {
                       <h3 className="font-semibold">Not Eligible for Refund</h3>
                     </div>
                     <ul className="space-y-2 text-sm">
-                      <li>• After 48-hour window expires</li>
+                      <li>• After 24-hour window expires</li>
                       <li>• Renewal payments (only initial purchase)</li>
                       <li>• Violated Terms of Service</li>
                       <li>• Previous refund already issued</li>
@@ -77,7 +77,7 @@ export default function Refund() {
 
               <section>
                 <h2 className="text-2xl font-semibold mb-4">2. How to Request a Refund</h2>
-                <p className="mb-4">To request a refund within the 48-hour window:</p>
+                <p className="mb-4">To request a refund within the 24-hour window:</p>
                 <ol className="list-decimal pl-6 space-y-3">
                   <li>
                     <strong>Email us at:</strong> support@echofort.ai
@@ -111,7 +111,7 @@ export default function Refund() {
 
                 <h3 className="text-xl font-semibold mb-3 mt-4">3.1 During Free Trial</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Cancel anytime during the 48-hour trial period</li>
+                  <li>Cancel anytime during the 24-hour trial period</li>
                   <li>No charges will be applied</li>
                   <li>Access continues until trial end date</li>
                   <li>No refund needed as no payment was made</li>
