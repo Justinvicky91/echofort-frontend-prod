@@ -10,6 +10,10 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ScamCases from "./pages/ScamCases";
+import SuperAdminDashboard from "./pages/dashboard/SuperAdminDashboard";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import EmployeeDashboard from "./pages/dashboard/EmployeeDashboard";
+import UserDashboard from "./pages/dashboard/UserDashboard";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -25,6 +29,10 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/scam-cases" component={ScamCases} />
+      <Route path="/dashboard/super-admin" component={SuperAdminDashboard} />
+      <Route path="/dashboard/admin" component={AdminDashboard} />
+      <Route path="/dashboard/employee" component={EmployeeDashboard} />
+      <Route path="/dashboard/user" component={UserDashboard} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
