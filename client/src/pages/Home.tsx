@@ -311,17 +311,31 @@ export default function Home() {
             </p>
           </div>
           <div className="max-w-4xl mx-auto">
-            <div className="relative aspect-video rounded-2xl overflow-hidden glass-card">
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-purple-500/20">
-                <Button size="lg" className="btn-hover-lift">
-                  <Play className="mr-2 w-6 h-6" />
-                  Play Demo Video
-                </Button>
+            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
+              {/* Real YouTube Video Embed - Digital Arrest Scam Explained */}
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/_rU9GCv8xRk"
+                title="Digital Arrest Scam Explained"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0"
+              />
+            </div>
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="glass-card p-4 rounded-lg">
+                <p className="text-sm font-semibold mb-2">📺 Digital Arrest Scam</p>
+                <p className="text-xs text-muted-foreground">Learn how scammers pose as law enforcement</p>
               </div>
-              {/* Placeholder for video - replace with actual video embed */}
-              <div className="absolute bottom-4 left-4 right-4 glass-card p-4 rounded-lg">
-                <p className="text-sm font-medium">🎬 Real scam call demonstration</p>
-                <p className="text-xs text-muted-foreground">See how EchoFort AI identifies and blocks scammers</p>
+              <div className="glass-card p-4 rounded-lg">
+                <p className="text-sm font-semibold mb-2">🎯 Real Examples</p>
+                <p className="text-xs text-muted-foreground">Actual scam call recordings and patterns</p>
+              </div>
+              <div className="glass-card p-4 rounded-lg">
+                <p className="text-sm font-semibold mb-2">🛡️ Stay Protected</p>
+                <p className="text-xs text-muted-foreground">EchoFort blocks these scams automatically</p>
               </div>
             </div>
           </div>
