@@ -161,7 +161,7 @@ export default function Signup() {
           <div className="flex items-center justify-between">
             <Link href="/">
               <div className="flex items-center gap-3 cursor-pointer">
-                <img src="/logo.png" alt="EchoFort" className="w-16 h-16" />
+                <img src="/logo.png" alt="EchoFort" className="w-12 h-12" />
                 <span className="text-xl font-bold gradient-text">EchoFort</span>
               </div>
             </Link>
