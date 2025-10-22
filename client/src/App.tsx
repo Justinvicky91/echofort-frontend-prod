@@ -21,6 +21,7 @@ import MarketingDashboard from "./pages/dashboard/MarketingDashboard";
 import SupportDashboard from "./pages/dashboard/SupportDashboard";
 import AccountingDashboard from "./pages/dashboard/AccountingDashboard";
 import HRDashboard from "./pages/dashboard/HRDashboard";
+import Demo from "./pages/Demo";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -58,7 +59,9 @@ function Router() {
       <Route path="/marketing" component={MarketingDashboard} />
       <Route path="/support" component={SupportDashboard} />
       <Route path="/accounting" component={AccountingDashboard} />
-      <Route path="/hr" component={HRDashboard} />
+        <Route path="/hr" component={HRDashboard} />
+        <Route path="/demo" component={Demo} />
+        <Route path="/try" component={Demo} />
       
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

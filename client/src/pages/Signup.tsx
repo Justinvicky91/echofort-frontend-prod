@@ -18,6 +18,7 @@ export default function Signup() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
+    countryCode: "+91",
     phone: "",
     plan: "personal",
     address: "",
@@ -241,10 +242,57 @@ export default function Signup() {
                 </div>
                 <div>
                   <Label htmlFor="phone">Phone Number *</Label>
-                  <div className="relative mt-2">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input id="phone" type="tel" placeholder="10-digit mobile number" className="pl-10" value={formData.phone} onChange={(e) => handleInputChange('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} required />
+                  <div className="flex gap-2 mt-2">
+                    <Select value={formData.countryCode} onValueChange={(value) => handleInputChange('countryCode', value)}>
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="+91">🇮🇳 +91</SelectItem>
+                        <SelectItem value="+1">🇺🇸 +1</SelectItem>
+                        <SelectItem value="+44">🇬🇧 +44</SelectItem>
+                        <SelectItem value="+61">🇦🇺 +61</SelectItem>
+                        <SelectItem value="+971">🇦🇪 +971</SelectItem>
+                        <SelectItem value="+65">🇸🇬 +65</SelectItem>
+                        <SelectItem value="+60">🇲🇾 +60</SelectItem>
+                        <SelectItem value="+81">🇯🇵 +81</SelectItem>
+                        <SelectItem value="+82">🇰🇷 +82</SelectItem>
+                        <SelectItem value="+86">🇨🇳 +86</SelectItem>
+                        <SelectItem value="+49">🇩🇪 +49</SelectItem>
+                        <SelectItem value="+33">🇫🇷 +33</SelectItem>
+                        <SelectItem value="+39">🇮🇹 +39</SelectItem>
+                        <SelectItem value="+34">🇪🇸 +34</SelectItem>
+                        <SelectItem value="+7">🇷🇺 +7</SelectItem>
+                        <SelectItem value="+55">🇧🇷 +55</SelectItem>
+                        <SelectItem value="+27">🇿🇦 +27</SelectItem>
+                        <SelectItem value="+234">🇳🇬 +234</SelectItem>
+                        <SelectItem value="+20">🇪🇬 +20</SelectItem>
+                        <SelectItem value="+92">🇵🇰 +92</SelectItem>
+                        <SelectItem value="+880">🇧🇩 +880</SelectItem>
+                        <SelectItem value="+94">🇱🇰 +94</SelectItem>
+                        <SelectItem value="+977">🇳🇵 +977</SelectItem>
+                        <SelectItem value="+66">🇹🇭 +66</SelectItem>
+                        <SelectItem value="+84">🇻🇳 +84</SelectItem>
+                        <SelectItem value="+63">🇵🇭 +63</SelectItem>
+                        <SelectItem value="+62">🇮🇩 +62</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="relative flex-1">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Input 
+                        id="phone" 
+                        type="tel" 
+                        placeholder="Enter mobile number" 
+                        className="pl-10" 
+                        value={formData.phone} 
+                        onChange={(e) => handleInputChange('phone', e.target.value.replace(/\D/g, ''))} 
+                        required 
+                      />
+                    </div>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Full number: {formData.countryCode} {formData.phone}
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="plan">Choose Your Plan *</Label>
