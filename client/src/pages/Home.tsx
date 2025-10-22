@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Shield, Phone, MapPin, Clock, AlertTriangle, CheckCircle, ArrowRight, Play, Sun, Moon, Monitor, Bell, TrendingUp, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import api from "@/lib/api";
 
 const liveScams = [
   {
@@ -66,6 +67,9 @@ export default function Home() {
     month: 'long', 
     day: 'numeric' 
   }));
+  const [youtubeVideos, setYoutubeVideos] = useState<any[]>([]);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [liveScamAlerts, setLiveScamAlerts] = useState<any[]>(liveScams);
 
   useEffect(() => {
     const animateValue = (start: number, end: number, duration: number, setter: (val: number) => void) => {
@@ -85,7 +89,35 @@ export default function Home() {
     animateValue(0, 50000, 2000, (val) => setStats(s => ({ ...s, usersProtected: val })));
     animateValue(0, 125000, 2000, (val) => setStats(s => ({ ...s, scamsBlocked: val })));
     animateValue(0, 150, 2000, (val) => setStats(s => ({ ...s, moneySaved: val })));
-  }, []);
+
+    // Fetch YouTube videos and scam alerts from API
+    fetchContentFromAPI();
+
+    // Rotate video every 30 minutes
+    const videoRotationInterval = setInterval(() => {
+      setCurrentVideoIndex(prev => (prev + 1) % (youtubeVideos.length || 1));
+    }, 30 * 60 * 1000); // 30 minutes
+
+    return () => clearInterval(videoRotationInterval);
+  }, [youtubeVideos.length]);
+
+  const fetchContentFromAPI = async () => {
+    try {
+      const [videos, alerts] = await Promise.all([
+        api.getYouTubeVideos(),
+        api.getLiveScamAlerts()
+      ]);
+      if (videos && videos.videos && videos.videos.length > 0) {
+        setYoutubeVideos(videos.videos);
+      }
+      if (alerts && alerts.alerts && alerts.alerts.length > 0) {
+        setLiveScamAlerts(alerts.alerts);
+      }
+    } catch (error) {
+      console.error('Failed to fetch content from API:', error);
+      // Keep using hardcoded data as fallback
+    }
+  };
 
   const ThemeToggle = () => (
     <div className="flex items-center gap-2 p-1 bg-muted rounded-lg">
@@ -175,7 +207,7 @@ export default function Home() {
             </button>
           </div>
           <div className="p-4 space-y-4">
-            {liveScams.map((scam, index) => (
+            {liveScamAlerts.map((scam, index) => (
               <a
                 key={index}
                 href={scam.link}
@@ -312,12 +344,14 @@ export default function Home() {
           </div>
           <div className="max-w-4xl mx-auto">
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
-              {/* Real YouTube Video Embed - Digital Arrest Scam Explained */}
+              {/* Dynamic YouTube Video from Database - Rotates every 30 minutes */}
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/_rU9GCv8xRk"
-                title="Digital Arrest Scam Explained"
+                src={youtubeVideos.length > 0 
+                  ? `https://www.youtube.com/embed/${youtubeVideos[currentVideoIndex]?.video_id}` 
+                  : "https://www.youtube.com/embed/_rU9GCv8xRk"}
+                title={youtubeVideos[currentVideoIndex]?.title || "Digital Arrest Scam Explained"}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

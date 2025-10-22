@@ -4,7 +4,7 @@ import {
   Users, DollarSign, Shield, TrendingUp, AlertTriangle, 
   CreditCard, Settings, LogOut, Menu, X, Bot, Lock,
   Gift, Database, BarChart3, Mail, HeadphonesIcon, Zap,
-  Activity, Globe, Cpu, Eye
+  Activity, Globe, Cpu, Eye, Server, PieChart
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import api from '../../lib/api';
@@ -13,6 +13,9 @@ import PaymentGateways from '../../components/admin/PaymentGateways';
 import CallRecordingVault from '../../components/admin/CallRecordingVault';
 import CustomerExemptions from '../../components/admin/CustomerExemptions';
 import EchoFortAI from '../../components/admin/EchoFortAI';
+import InfrastructureCosts from '../../components/admin/InfrastructureCosts';
+import CustomerManagement from '../../components/admin/CustomerManagement';
+import FinancialManagement from '../../components/admin/FinancialManagement';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -53,7 +56,9 @@ export default function SuperAdminDashboard() {
   const menuItems = [
     { id: 'overview', label: 'Command Center', icon: Activity, color: 'from-blue-500 to-cyan-500' },
     { id: 'employees', label: 'Team Matrix', icon: Users, color: 'from-purple-500 to-pink-500' },
-    { id: 'customers', label: 'User Analytics', icon: Globe, color: 'from-green-500 to-emerald-500' },
+    { id: 'customers', label: 'Customer Hub', icon: Globe, color: 'from-green-500 to-emerald-500' },
+    { id: 'financial', label: 'Financial Center', icon: PieChart, color: 'from-emerald-500 to-teal-500' },
+    { id: 'infrastructure', label: 'Infrastructure', icon: Server, color: 'from-cyan-500 to-blue-500' },
     { id: 'payments', label: 'Payment Core', icon: CreditCard, color: 'from-yellow-500 to-orange-500' },
     { id: 'exemptions', label: 'VIP Access', icon: Gift, color: 'from-pink-500 to-rose-500' },
     { id: 'vault', label: 'Secure Vault', icon: Lock, color: 'from-red-500 to-pink-500' },
@@ -235,6 +240,9 @@ export default function SuperAdminDashboard() {
               >
                 {activeSection === 'overview' && <OverviewSection stats={stats} loading={loading} darkMode={darkMode} />}
                 {activeSection === 'employees' && <EmployeeManagement />}
+                {activeSection === 'customers' && <CustomerManagement />}
+                {activeSection === 'financial' && <FinancialManagement />}
+                {activeSection === 'infrastructure' && <InfrastructureCosts />}
                 {activeSection === 'payments' && <PaymentGateways />}
                 {activeSection === 'vault' && <CallRecordingVault />}
                 {activeSection === 'exemptions' && <CustomerExemptions />}

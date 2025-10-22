@@ -73,19 +73,19 @@ class ApiService {
 
   // Employee Management
   async getEmployees() {
-    return this.request('/admin/employees/list');
+    return this.request('/admin/employees');
   }
 
   async createEmployee(data: any) {
-    return this.request('/admin/employees/create', {
+    return this.request('/admin/employees', {
       method: 'POST',
       body: JSON.stringify(data)
     });
   }
 
   async updateEmployee(id: number, data: any) {
-    return this.request(`/admin/employees/${id}/update`, {
-      method: 'PUT',
+    return this.request(`/admin/employees/${id}`, {
+      method: 'PATCH',
       body: JSON.stringify(data)
     });
   }
@@ -105,7 +105,7 @@ class ApiService {
 
   // Payment Gateways
   async getPaymentGateways() {
-    return this.request('/admin/payment-gateways/list');
+    return this.request('/payment/active');
   }
 
   async configurePaymentGateway(data: any) {
@@ -412,6 +412,66 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify(data)
     });
+  }
+
+  // Infrastructure Costs
+  async getInfrastructureCosts() {
+    return this.request('/admin/infra-costs/current-month');
+  }
+
+  async getScalingRecommendations() {
+    return this.request('/admin/infra-costs/scaling-recommendations');
+  }
+
+  async recordInfrastructureCost(data: any) {
+    return this.request('/admin/infra-costs/record', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  // Customer Management
+  async getAllCustomers(filters?: any) {
+    const params = filters ? `?${new URLSearchParams(filters).toString()}` : '';
+    return this.request(`/admin/customers${params}`);
+  }
+
+  async getCustomerActivity(userId: number) {
+    return this.request(`/admin/customers/${userId}/activity`);
+  }
+
+  async getCustomerSubscription(userId: number) {
+    return this.request(`/admin/customers/${userId}/subscription`);
+  }
+
+  // Financial Management
+  async getFinancialOverview() {
+    return this.request('/admin/profit-loss/overview');
+  }
+
+  async getRevenueBreakdown(month: number, year: number) {
+    return this.request(`/admin/profit-loss/revenue?month=${month}&year=${year}`);
+  }
+
+  async getExpenseBreakdown(month: number, year: number) {
+    return this.request(`/admin/profit-loss/expenses?month=${month}&year=${year}`);
+  }
+
+  async recordExpense(data: any) {
+    return this.request('/admin/profit-loss/expense', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  // YouTube Videos
+  async getYouTubeVideos() {
+    return this.request('/public/youtube-videos');
+  }
+
+  // Live Scam Alerts
+  async getLiveScamAlerts() {
+    return this.request('/public/scam-alerts');
   }
 }
 
