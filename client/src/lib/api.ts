@@ -440,6 +440,25 @@ class ApiService {
     return this.request('/admin/infra-costs/recommendations');
   }
 
+  // Service Integrations (Railway, OpenAI, etc.)
+  async getRailwayCosts() {
+    return this.request('/admin/integrations/railway/costs');
+  }
+
+  async getOpenAIUsage() {
+    return this.request('/admin/integrations/openai/usage');
+  }
+
+  async getAllServicesSummary() {
+    return this.request('/admin/integrations/all-services/summary');
+  }
+
+  async syncServiceCosts() {
+    return this.request('/admin/integrations/sync-costs', {
+      method: 'POST'
+    });
+  }
+
   async recordInfrastructureCost(data: any) {
     return this.request('/admin/infra-costs/record', {
       method: 'POST',

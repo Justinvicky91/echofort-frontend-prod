@@ -14,15 +14,27 @@ export default function InfrastructureCosts() {
 
   const fetchCosts = async () => {
     try {
-      const [costsData, scalingData] = await Promise.all([
-        api.getInfrastructureCosts().catch(e => ({ total_infrastructure_cost: 0, costs_breakdown: [] })),
-        api.getScalingRecommendations().catch(e => ({ projected_next_month: 0, growth_rate: 0, recommendations: [] }))
+      // Fetch both recorded costs and live service data
+      const [costsData, scalingData, servicesData] = await Promise.all([
+        api.getInfrastructureCosts().catch(e => ({ total_infrastructure_cost: 0, breakdown: [] })),
+        api.getScalingRecommendations().catch(e => ({ projected_next_month: 0, growth_rate: 0, recommendations: [] })),
+        api.getAllServicesSummary().catch(e => ({ live_data: {}, recorded_costs: [] }))
       ]);
-      setCosts(costsData);
+      
+      // Combine recorded and live data
+      const combinedCosts = {
+        total_infrastructure_cost: costsData.total_infrastructure_cost || 0,
+        breakdown: costsData.breakdown || [],
+        live_railway: servicesData.data?.live_data?.railway || null,
+        live_openai: servicesData.data?.live_data?.openai || null,
+        total_estimated_monthly: servicesData.data?.total_estimated_monthly_inr || 0
+      };
+      
+      setCosts(combinedCosts);
       setScaling(scalingData);
     } catch (error) {
       console.error('Failed to fetch infrastructure data:', error);
-      setCosts({ total_infrastructure_cost: 0, costs_breakdown: [] });
+      setCosts({ total_infrastructure_cost: 0, breakdown: [], live_railway: null, live_openai: null });
       setScaling({ projected_next_month: 0, growth_rate: 0, recommendations: [] });
     } finally {
       setLoading(false);
@@ -111,7 +123,7 @@ export default function InfrastructureCosts() {
           Service Cost Breakdown
         </h3>
         <div className="space-y-4">
-          {costs?.costs_breakdown?.map((service: any, index: number) => {
+          {costs?.breakdown?.map((service: any, index: number) => {
             const Icon = serviceIcons[service.service] || Server;
             return (
               <motion.div
