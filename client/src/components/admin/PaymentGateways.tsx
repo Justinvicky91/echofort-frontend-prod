@@ -25,9 +25,11 @@ export default function PaymentGateways() {
   const fetchGateways = async () => {
     try {
       const data = await api.getPaymentGateways();
-      setGateways(data.gateways || []);
+      setGateways(data.gateways || data.items || []);
     } catch (error) {
       console.error('Failed to fetch gateways:', error);
+      // Set empty array on error - API endpoint may not be fully configured
+      setGateways([]);
     } finally {
       setLoading(false);
     }

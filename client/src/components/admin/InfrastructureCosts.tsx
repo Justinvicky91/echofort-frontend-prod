@@ -15,13 +15,15 @@ export default function InfrastructureCosts() {
   const fetchCosts = async () => {
     try {
       const [costsData, scalingData] = await Promise.all([
-        api.getInfrastructureCosts(),
-        api.getScalingRecommendations()
+        api.getInfrastructureCosts().catch(e => ({ total_infrastructure_cost: 0, costs_breakdown: [] })),
+        api.getScalingRecommendations().catch(e => ({ projected_next_month: 0, growth_rate: 0, recommendations: [] }))
       ]);
       setCosts(costsData);
       setScaling(scalingData);
     } catch (error) {
       console.error('Failed to fetch infrastructure data:', error);
+      setCosts({ total_infrastructure_cost: 0, costs_breakdown: [] });
+      setScaling({ projected_next_month: 0, growth_rate: 0, recommendations: [] });
     } finally {
       setLoading(false);
     }

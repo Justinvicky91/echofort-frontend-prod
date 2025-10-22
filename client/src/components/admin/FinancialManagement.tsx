@@ -19,15 +19,18 @@ export default function FinancialManagement() {
   const fetchFinancialData = async () => {
     try {
       const [overviewData, revenueData, expenseData] = await Promise.all([
-        api.getFinancialOverview(),
-        api.getRevenueBreakdown(selectedMonth, selectedYear),
-        api.getExpenseBreakdown(selectedMonth, selectedYear)
+        api.getFinancialOverview().catch(e => ({})),
+        api.getRevenueBreakdown(selectedMonth, selectedYear).catch(e => ({ total_revenue: 0, revenue_by_plan: [] })),
+        api.getExpenseBreakdown(selectedMonth, selectedYear).catch(e => ({ total_expenses: 0, expenses_by_category: [] }))
       ]);
       setOverview(overviewData);
       setRevenue(revenueData);
       setExpenses(expenseData);
     } catch (error) {
       console.error('Failed to fetch financial data:', error);
+      setOverview({});
+      setRevenue({ total_revenue: 0, revenue_by_plan: [] });
+      setExpenses({ total_expenses: 0, expenses_by_category: [] });
     } finally {
       setLoading(false);
     }

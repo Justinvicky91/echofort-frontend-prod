@@ -17,9 +17,11 @@ export default function CustomerManagement() {
   const fetchCustomers = async () => {
     try {
       const data = await api.getAllCustomers();
-      setCustomers(data.customers || []);
+      setCustomers(data.customers || data.items || []);
     } catch (error) {
       console.error('Failed to fetch customers:', error);
+      // Set empty array on error - API endpoint may not exist yet
+      setCustomers([]);
     } finally {
       setLoading(false);
     }

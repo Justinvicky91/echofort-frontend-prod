@@ -105,11 +105,11 @@ class ApiService {
 
   // Payment Gateways
   async getPaymentGateways() {
-    return this.request('/payment/active');
+    return this.request('/api/admin/payment-gateways/active');
   }
 
   async configurePaymentGateway(data: any) {
-    return this.request('/admin/payment-gateways/configure', {
+    return this.request('/api/admin/payment-gateways/configure', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -420,7 +420,7 @@ class ApiService {
   }
 
   async getScalingRecommendations() {
-    return this.request('/admin/infra-costs/scaling-recommendations');
+    return this.request('/admin/infra-costs/recommendations');
   }
 
   async recordInfrastructureCost(data: any) {
@@ -446,7 +446,7 @@ class ApiService {
 
   // Financial Management
   async getFinancialOverview() {
-    return this.request('/admin/profit-loss/overview');
+    return this.request('/admin/profit-loss/statement');
   }
 
   async getRevenueBreakdown(month: number, year: number) {

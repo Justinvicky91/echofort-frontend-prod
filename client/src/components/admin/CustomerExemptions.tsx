@@ -14,9 +14,11 @@ export default function CustomerExemptions() {
   const fetchExemptions = async () => {
     try {
       const data = await api.getExemptions();
-      setExemptions(data.exemptions || []);
+      setExemptions(data.exemptions || data.items || []);
     } catch (error) {
       console.error('Failed to fetch exemptions:', error);
+      // Set empty array on error - API endpoint may require authentication
+      setExemptions([]);
     } finally {
       setLoading(false);
     }
