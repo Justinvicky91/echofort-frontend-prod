@@ -133,16 +133,16 @@ export default function Home() {
               </div>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <Link href="/features" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="/features" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 Features
               </Link>
-              <Link href="/pricing" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="/pricing" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 Pricing
               </Link>
-              <Link href="/about" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="/about" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 About
               </Link>
-              <Link href="/contact" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="/contact" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 Contact
               </Link>
             </div>

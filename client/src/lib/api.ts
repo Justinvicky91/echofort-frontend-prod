@@ -209,7 +209,7 @@ class ApiService {
   }
 
   async chatWithEchoFortAI(message: string) {
-    return this.request('/api/echofort-ai/chat', {
+    return this.request('/api/echofort-ai-intelligent/chat', {
       method: 'POST',
       body: JSON.stringify({ message, execute_directly: true })
     });
