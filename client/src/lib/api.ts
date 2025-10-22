@@ -11,28 +11,45 @@ class ApiService {
   }
 
   async request(endpoint: string, options: RequestInit = {}) {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        ...this.getHeaders(),
-        ...options.headers
+    try {
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          ...this.getHeaders(),
+          ...options.headers
+        }
+      });
+
+      if (response.status === 401) {
+        // Only redirect if not already on login page
+        if (!window.location.pathname.includes('/login')) {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        }
+        throw new Error('Unauthorized');
       }
-    });
 
-    if (response.status === 401) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Unauthorized');
+      const data = await response.json();
+      
+      if (!response.ok) {
+        // Silently fail for expected missing endpoints (404, 500)
+        if (response.status === 404 || response.status === 500) {
+          console.warn(`API endpoint not available: ${endpoint}`);
+          return { items: [], success: false, message: 'Endpoint not available' };
+        }
+        throw new Error(data.message || 'Request failed');
+      }
+
+      return data;
+    } catch (error: any) {
+      // Handle network errors gracefully
+      if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
+        console.warn(`Network error for ${endpoint}, returning empty data`);
+        return { items: [], success: false, message: 'Network error' };
+      }
+      throw error;
     }
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.message || 'Request failed');
-    }
-
-    return data;
   }
 
   // Auth
