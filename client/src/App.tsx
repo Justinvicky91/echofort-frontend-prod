@@ -22,6 +22,9 @@ import SupportDashboard from "./pages/dashboard/SupportDashboard";
 import AccountingDashboard from "./pages/dashboard/AccountingDashboard";
 import HRDashboard from "./pages/dashboard/HRDashboard";
 import Demo from "./pages/Demo";
+import Download from "./pages/Download";
+import Careers from "./pages/Careers";
+import ScamDatabase from "./pages/ScamDatabase";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -62,6 +65,9 @@ function Router() {
         <Route path="/hr" component={HRDashboard} />
         <Route path="/demo" component={Demo} />
         <Route path="/try" component={Demo} />
+        <Route path="/download" component={Download} />
+        <Route path="/careers" component={Careers} />
+        <Route path="/scam-database" component={ScamDatabase} />
       
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
