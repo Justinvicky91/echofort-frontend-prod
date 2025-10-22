@@ -4,7 +4,7 @@ import {
   Users, DollarSign, Shield, TrendingUp, AlertTriangle, 
   CreditCard, Settings, LogOut, Menu, X, Bot, Lock,
   Gift, Database, BarChart3, Mail, HeadphonesIcon, Zap,
-  Activity, Globe, Cpu, Eye, Server, PieChart
+  Activity, Globe, Cpu, Eye, Server, PieChart, Bell
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import api from '../../lib/api';
@@ -16,6 +16,7 @@ import EchoFortAI from '../../components/admin/EchoFortAI';
 import InfrastructureCosts from '../../components/admin/InfrastructureCosts';
 import CustomerManagement from '../../components/admin/CustomerManagement';
 import FinancialManagement from '../../components/admin/FinancialManagement';
+import ApprovalCenter from '../../components/admin/ApprovalCenter';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -55,6 +56,7 @@ export default function SuperAdminDashboard() {
 
   const menuItems = [
     { id: 'overview', label: 'Command Center', icon: Activity, color: 'from-blue-500 to-cyan-500' },
+    { id: 'approvals', label: 'Approval Center', icon: Bell, color: 'from-red-500 to-orange-500' },
     { id: 'employees', label: 'Team Matrix', icon: Users, color: 'from-purple-500 to-pink-500' },
     { id: 'customers', label: 'Customer Hub', icon: Globe, color: 'from-green-500 to-emerald-500' },
     { id: 'financial', label: 'Financial Center', icon: PieChart, color: 'from-emerald-500 to-teal-500' },
@@ -239,6 +241,7 @@ export default function SuperAdminDashboard() {
                 transition={{ duration: 0.3 }}
               >
                 {activeSection === 'overview' && <OverviewSection stats={stats} loading={loading} darkMode={darkMode} />}
+                {activeSection === 'approvals' && <ApprovalCenter />}
                 {activeSection === 'employees' && <EmployeeManagement />}
                 {activeSection === 'customers' && <CustomerManagement />}
                 {activeSection === 'financial' && <FinancialManagement />}

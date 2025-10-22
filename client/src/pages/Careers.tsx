@@ -1,81 +1,41 @@
-import { Shield, Briefcase, MapPin, Clock, TrendingUp, Users, Heart, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Briefcase, MapPin, Clock, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
+import api from '@/lib/api';
+
+interface JobOpening {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  experience: string;
+  description: string;
+  status: 'active' | 'inactive';
+  postedDate: string;
+}
 
 export default function Careers() {
-  const openings = [
-    {
-      title: 'Senior Full Stack Developer',
-      department: 'Engineering',
-      location: 'Remote / Bangalore',
-      type: 'Full-time',
-      experience: '5+ years',
-      description: 'Build and scale our AI-powered scam protection platform'
-    },
-    {
-      title: 'AI/ML Engineer',
-      department: 'Data Science',
-      location: 'Remote / Bangalore',
-      type: 'Full-time',
-      experience: '3+ years',
-      description: 'Develop machine learning models for scam detection and prevention'
-    },
-    {
-      title: 'Product Manager',
-      department: 'Product',
-      location: 'Bangalore',
-      type: 'Full-time',
-      experience: '4+ years',
-      description: 'Lead product strategy and roadmap for EchoFort platform'
-    },
-    {
-      title: 'Customer Success Manager',
-      department: 'Customer Success',
-      location: 'Remote',
-      type: 'Full-time',
-      experience: '2+ years',
-      description: 'Help customers get maximum value from EchoFort'
-    },
-    {
-      title: 'Marketing Manager',
-      department: 'Marketing',
-      location: 'Remote / Bangalore',
-      type: 'Full-time',
-      experience: '3+ years',
-      description: 'Drive growth and brand awareness for EchoFort'
-    },
-    {
-      title: 'Security Analyst',
-      department: 'Security',
-      location: 'Bangalore',
-      type: 'Full-time',
-      experience: '3+ years',
-      description: 'Monitor and analyze cyber threats and scam patterns'
-    }
-  ];
+  const [openings, setOpenings] = useState<JobOpening[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const benefits = [
-    {
-      icon: TrendingUp,
-      title: 'Competitive Salary',
-      description: 'Industry-leading compensation with equity options'
-    },
-    {
-      icon: Heart,
-      title: 'Health & Wellness',
-      description: 'Comprehensive health insurance for you and your family'
-    },
-    {
-      icon: Users,
-      title: 'Remote Work',
-      description: 'Flexible work-from-home and hybrid options'
-    },
-    {
-      icon: Zap,
-      title: 'Learning & Growth',
-      description: 'Annual learning budget and conference attendance'
+  useEffect(() => {
+    fetchJobOpenings();
+  }, []);
+
+  const fetchJobOpenings = async () => {
+    try {
+      // Fetch active job openings from backend
+      const response = await api.getJobOpenings();
+      setOpenings(response.filter((job: JobOpening) => job.status === 'active'));
+    } catch (error) {
+      console.warn('Failed to fetch job openings, using empty state');
+      setOpenings([]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
@@ -117,63 +77,68 @@ export default function Careers() {
           </p>
         </div>
 
-        {/* Benefits */}
-        <div className="max-w-6xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Why Work at <span className="text-blue-400">EchoFort</span>?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="bg-gray-800/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 text-center">
-                <benefit.icon className="w-10 h-10 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">{benefit.title}</h3>
-                <p className="text-sm text-gray-400">{benefit.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Open Positions */}
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Open <span className="text-blue-400">Positions</span>
+            Current <span className="text-blue-400">Openings</span>
           </h2>
-          <div className="space-y-4">
-            {openings.map((job, index) => (
-              <div key={index} className="bg-gray-800/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/30 transition-all">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2">{job.title}</h3>
-                    <p className="text-gray-400 mb-4">{job.description}</p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <span className="flex items-center gap-1 text-gray-500">
-                        <Briefcase className="w-4 h-4" />
-                        {job.department}
-                      </span>
-                      <span className="flex items-center gap-1 text-gray-500">
-                        <MapPin className="w-4 h-4" />
-                        {job.location}
-                      </span>
-                      <span className="flex items-center gap-1 text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        {job.type}
-                      </span>
-                      <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold">
-                        {job.experience}
-                      </span>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+              <span className="ml-3 text-gray-400">Loading job openings...</span>
+            </div>
+          ) : openings.length > 0 ? (
+            <div className="space-y-4">
+              {openings.map((job) => (
+                <div key={job.id} className="bg-gray-800/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/30 transition-all">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-2">{job.title}</h3>
+                      <p className="text-gray-400 mb-4">{job.description}</p>
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <Briefcase className="w-4 h-4" />
+                          {job.department}
+                        </span>
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <MapPin className="w-4 h-4" />
+                          {job.location}
+                        </span>
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <Clock className="w-4 h-4" />
+                          {job.type}
+                        </span>
+                        <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold">
+                          {job.experience}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <Link href="/contact">
+                        <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                          Apply Now
+                        </Button>
+                      </Link>
                     </div>
                   </div>
-                  <div className="flex-shrink-0">
-                    <Link href="/contact">
-                      <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                        Apply Now
-                      </Button>
-                    </Link>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-800/40 backdrop-blur-xl rounded-xl p-12 border border-gray-700/50 text-center">
+              <Briefcase className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">No Open Positions</h3>
+              <p className="text-gray-400 mb-6">
+                We don't have any open positions at the moment, but we're always looking for talented people.
+              </p>
+              <Link href="/contact">
+                <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                  Send Your Resume
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* CTA */}

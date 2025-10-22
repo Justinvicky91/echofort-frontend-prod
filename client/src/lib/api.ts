@@ -509,6 +509,61 @@ class ApiService {
   async getLiveScamAlerts() {
     return this.request('/public/scam-alerts');
   }
+
+  // Job Openings/Requirements
+  async getJobOpenings() {
+    return this.request('/admin/job-openings');
+  }
+
+  async createJobOpening(data: any) {
+    return this.request('/admin/job-openings', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async updateJobOpening(id: string, data: any) {
+    return this.request(`/admin/job-openings/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async deleteJobOpening(id: string) {
+    return this.request(`/admin/job-openings/${id}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // Approvals & Notifications
+  async getApprovals(filters?: any) {
+    const params = filters ? `?${new URLSearchParams(filters).toString()}` : '';
+    return this.request(`/admin/approvals${params}`);
+  }
+
+  async approveRequest(approvalId: string, data: any) {
+    return this.request(`/admin/approvals/${approvalId}/approve`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async rejectRequest(approvalId: string, data: any) {
+    return this.request(`/admin/approvals/${approvalId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async getNotifications() {
+    return this.request('/admin/notifications');
+  }
+
+  async markNotificationRead(notificationId: string) {
+    return this.request(`/admin/notifications/${notificationId}/read`, {
+      method: 'POST'
+    });
+  }
 }
 
 export const api = new ApiService();
