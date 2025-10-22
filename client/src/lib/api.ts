@@ -1,5 +1,5 @@
 // API Service for EchoFort Backend
-const API_URL = 'https://echofort-backend-production.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.echofort.ai';
 
 class ApiService {
   private getHeaders(): HeadersInit {
@@ -198,13 +198,20 @@ class ApiService {
   }
 
   async getAIInsights() {
-    return this.request('/api/ai-assistant/insights');
+    return this.request('/api/echofort-ai/insights');
   }
 
   async chatWithAI(message: string) {
     return this.request('/api/ai-assistant/chat', {
       method: 'POST',
       body: JSON.stringify({ message })
+    });
+  }
+
+  async chatWithEchoFortAI(message: string) {
+    return this.request('/api/echofort-ai/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message, execute_directly: true })
     });
   }
 
