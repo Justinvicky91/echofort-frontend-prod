@@ -28,9 +28,11 @@ export default function EmployeeManagement() {
   const fetchEmployees = async () => {
     try {
       const data = await api.getEmployees();
-      setEmployees(data.employees || []);
+      // Backend returns { items: [...] } or { employees: [...] }
+      setEmployees(data.items || data.employees || []);
     } catch (error) {
       console.error('Failed to fetch employees:', error);
+      setEmployees([]);
     } finally {
       setLoading(false);
     }
@@ -70,9 +72,9 @@ export default function EmployeeManagement() {
   };
 
   const filteredEmployees = employees.filter(emp => {
-    const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         emp.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         emp.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (emp.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                         (emp.username?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                         (emp.email?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === 'all' || emp.role === filterRole;
     return matchesSearch && matchesRole;
   });
@@ -155,15 +157,15 @@ export default function EmployeeManagement() {
             ) : (
               filteredEmployees.map((employee) => (
                 <tr key={employee.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{employee.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{employee.username}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{employee.email}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{employee.name || 'N/A'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{employee.username || 'N/A'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{employee.email || 'N/A'}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                      {employee.role.replace('_', ' ')}
+                      {(employee.role || 'unknown').replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{employee.department}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{employee.department || 'N/A'}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       employee.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
