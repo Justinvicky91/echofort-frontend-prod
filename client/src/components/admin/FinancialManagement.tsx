@@ -94,7 +94,7 @@ export default function FinancialManagement() {
   const profitLoss = (revenue?.total_revenue || 0) - (expenses?.total_expenses || 0);
   const profitMargin = revenue?.total_revenue > 0 
     ? ((profitLoss / revenue.total_revenue) * 100).toFixed(1) 
-    : 0;
+    : 'N/A';
 
   if (loading) {
     return (
@@ -201,7 +201,9 @@ export default function FinancialManagement() {
             <span className="text-purple-400 text-sm font-semibold">Margin</span>
           </div>
           <h3 className="text-gray-400 text-sm mb-1">Profit Margin</h3>
-          <p className="text-3xl font-bold text-white">{profitMargin}%</p>
+          <p className="text-3xl font-bold text-white">
+            {profitMargin === 'N/A' ? 'N/A' : `${profitMargin}%`}
+          </p>
         </motion.div>
       </div>
 
