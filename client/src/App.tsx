@@ -17,6 +17,10 @@ import SuperAdminDashboard from "./pages/dashboard/SuperAdminDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import EmployeeDashboard from "./pages/dashboard/EmployeeDashboard";
 import UserDashboard from "./pages/dashboard/UserDashboard";
+import MarketingDashboard from "./pages/dashboard/MarketingDashboard";
+import SupportDashboard from "./pages/dashboard/SupportDashboard";
+import AccountingDashboard from "./pages/dashboard/AccountingDashboard";
+import HRDashboard from "./pages/dashboard/HRDashboard";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -51,6 +55,10 @@ function Router() {
       <Route path="/super-admin" component={SuperAdminDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/employee" component={EmployeeDashboard} />
+      <Route path="/marketing" component={MarketingDashboard} />
+      <Route path="/support" component={SupportDashboard} />
+      <Route path="/accounting" component={AccountingDashboard} />
+      <Route path="/hr" component={HRDashboard} />
       
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
