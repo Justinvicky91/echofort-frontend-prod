@@ -164,12 +164,21 @@ export default function Home() {
                 <span className="text-xs text-muted-foreground">AI-Powered Protection</span>
               </div>
             </div>
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-6">
               <Link href="/features" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 Features
               </Link>
               <Link href="/pricing" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 Pricing
+              </Link>
+              <Link href="/scam-database" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
+                Scam Database
+              </Link>
+              <Link href="/download" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
+                Download
+              </Link>
+              <Link href="/careers" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
+                Careers
               </Link>
               <Link href="/about" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 About
@@ -293,6 +302,37 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   <span>No credit card required</span>
+                </div>
+              </div>
+              
+              {/* App Store Badges */}
+              <div className="mt-6">
+                <p className="text-sm text-muted-foreground mb-3">Download the app now:</p>
+                <div className="flex items-center gap-4">
+                  <a 
+                    href="https://play.google.com/store/apps/details?id=com.echofort.app" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="transition-transform hover:scale-105"
+                  >
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                      alt="Get it on Google Play" 
+                      className="h-12"
+                    />
+                  </a>
+                  <a 
+                    href="https://apps.apple.com/app/echofort/id123456789" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="transition-transform hover:scale-105"
+                  >
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" 
+                      alt="Download on the App Store" 
+                      className="h-12"
+                    />
+                  </a>
                 </div>
               </div>
             </div>
