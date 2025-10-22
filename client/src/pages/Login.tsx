@@ -2,39 +2,59 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Shield, Mail, Lock, ArrowRight, Loader2, User, Eye, EyeOff } from "lucide-react";
 import { Link } from "wouter";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.echofort.ai';
+
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [step, setStep] = useState<"email" | "otp">("email");
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState<"identifier" | "otp" | "password">("identifier");
+  const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loginType, setLoginType] = useState<"customer" | "employee" | null>(null);
 
-  const handleSendOTP = async (e: React.FormEvent) => {
+  // Detect if identifier is email or username
+  const isEmail = (str: string) => {
+    return str.includes('@') && str.includes('.');
+  };
+
+  const handleInitiateLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    const isEmailLogin = isEmail(identifier);
+
     try {
-      await api.auth.sendOTP(email);
-      toast.success("OTP sent to your email!");
-      setStep("otp");
+      if (isEmailLogin) {
+        // Customer login - Email + OTP
+        setLoginType('customer');
+        await api.auth.sendOTP(identifier);
+        toast.success("OTP sent to your email!");
+        setStep("otp");
+      } else {
+        // Employee/Admin login - Username + Password
+        setLoginType('employee');
+        setStep("password");
+      }
     } catch (error: any) {
-      toast.error(error.message || "Failed to send OTP");
+      toast.error(error.message || "Failed to process login");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyOTP = async (e: React.FormEvent) => {
+  const handleCustomerVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await api.auth.verifyOTP(email, otp);
+      const response = await api.auth.verifyOTP(identifier, otp);
       localStorage.setItem("auth_token", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
       
@@ -53,6 +73,46 @@ export default function Login() {
       }
     } catch (error: any) {
       toast.error(error.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmployeeLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/auth/simple-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: identifier,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        toast.success("Login successful!");
+        
+        // Redirect based on role
+        if (data.user.is_super_admin || data.user.role === "super_admin") {
+          setLocation("/super-admin");
+        } else if (data.user.role === "admin") {
+          setLocation("/admin");
+        } else {
+          setLocation("/employee");
+        }
+      } else {
+        toast.error(data.detail || data.message || 'Login failed');
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Network error");
     } finally {
       setLoading(false);
     }
@@ -121,38 +181,44 @@ export default function Login() {
           <div className="mb-8">
             <h2 className="text-3xl font-bold mb-2">Login to Your Account</h2>
             <p className="text-muted-foreground">
-              Enter your email to receive a one-time password
+              {step === "identifier" && "Enter your email or username to continue"}
+              {step === "otp" && "Enter the OTP sent to your email"}
+              {step === "password" && "Enter your password to continue"}
             </p>
           </div>
 
-          {step === "email" ? (
-            <form onSubmit={handleSendOTP} className="space-y-6">
+          {/* Step 1: Email or Username */}
+          {step === "identifier" && (
+            <form onSubmit={handleInitiateLogin} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Email Address
+                  Email or Username
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Enter your email or username"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     className="pl-10"
                     required
                   />
                 </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  💡 Enter email for customer login or username for employee/admin login
+                </p>
               </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                    Sending OTP...
+                    Processing...
                   </>
                 ) : (
                   <>
-                    Send OTP
+                    Continue
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </>
                 )}
@@ -165,8 +231,11 @@ export default function Login() {
                 </Link>
               </div>
             </form>
-          ) : (
-            <form onSubmit={handleVerifyOTP} className="space-y-6">
+          )}
+
+          {/* Step 2: OTP (for customers) */}
+          {step === "otp" && (
+            <form onSubmit={handleCustomerVerify} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Enter OTP
@@ -177,18 +246,18 @@ export default function Login() {
                     type="text"
                     placeholder="Enter 6-digit OTP"
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     className="pl-10 text-center text-2xl tracking-widest"
                     maxLength={6}
                     required
                   />
                 </div>
                 <p className="text-sm text-muted-foreground mt-2">
-                  OTP sent to {email}
+                  OTP sent to {identifier}
                 </p>
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || otp.length !== 6}>
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 w-4 h-4 animate-spin" />
@@ -206,16 +275,19 @@ export default function Login() {
                 type="button"
                 variant="ghost"
                 className="w-full"
-                onClick={() => setStep("email")}
+                onClick={() => {
+                  setStep("identifier");
+                  setOtp("");
+                }}
               >
-                Change Email
+                ← Back
               </Button>
 
               <Button
                 type="button"
                 variant="link"
                 className="w-full"
-                onClick={handleSendOTP}
+                onClick={handleInitiateLogin}
                 disabled={loading}
               >
                 Resend OTP
@@ -223,10 +295,68 @@ export default function Login() {
             </form>
           )}
 
+          {/* Step 3: Password (for employees/admin) */}
+          {step === "password" && (
+            <form onSubmit={handleEmployeeLogin} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Employee/Admin authentication for {identifier}
+                </p>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    Login
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setStep("identifier");
+                  setPassword("");
+                }}
+              >
+                ← Back
+              </Button>
+            </form>
+          )}
+
           <div className="mt-8 p-4 bg-muted rounded-lg">
             <p className="text-sm text-center text-muted-foreground">
-              🔒 Secure login powered by OTP authentication. 
-              No passwords to remember or forget.
+              🔒 Secure login powered by {loginType === 'customer' ? 'OTP authentication' : 'encrypted password'}. 
+              {loginType === 'customer' && ' No passwords to remember or forget.'}
             </p>
           </div>
         </div>

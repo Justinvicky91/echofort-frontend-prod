@@ -46,11 +46,11 @@ function Router() {
       <Route path="/privacy" component={Privacy} />
       <Route path="/refund" component={Refund} />
       
-      {/* TODO: Add these routes as we build them */}
-      {/* <Route path="/dashboard" component={UserDashboard} /> */}
-      {/* <Route path="/super-admin" component={SuperAdminDashboard} /> */}
-      {/* <Route path="/admin" component={AdminDashboard} /> */}
-      {/* <Route path="/employee" component={EmployeeDashboard} /> */}
+      {/* Dashboard routes (without /dashboard prefix) */}
+      <Route path="/dashboard" component={UserDashboard} />
+      <Route path="/super-admin" component={SuperAdminDashboard} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/employee" component={EmployeeDashboard} />
       
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
