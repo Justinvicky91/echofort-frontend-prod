@@ -289,10 +289,12 @@ export default function Home() {
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="btn-hover-lift">
-                  <Play className="mr-2 w-5 h-5" />
-                  Watch Demo
-                </Button>
+                <Link href="/demo">
+                  <Button size="lg" variant="outline" className="btn-hover-lift">
+                    <Play className="mr-2 w-5 h-5" />
+                    Watch Demo
+                  </Button>
+                </Link>
               </div>
               <div className="flex items-center gap-8 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
