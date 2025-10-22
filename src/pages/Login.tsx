@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
-const API_URL = 'https://echofort-backend-production.up.railway.app';
+const API_URL = 'https://api.echofort.ai';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,37 +14,41 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [userType, setUserType] = useState<'customer' | 'employee' | 'super_admin' | null>(null);
-  const [requiresOtp, setRequiresOtp] = useState(false);
-  const [requiresPassword, setRequiresPassword] = useState(false);
+  const [loginType, setLoginType] = useState<'customer' | 'employee' | null>(null);
+
+  // Detect if identifier is email or username
+  const isEmail = (str: string) => {
+    return str.includes('@') && str.includes('.');
+  };
 
   const handleInitiateLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    const isEmailLogin = isEmail(identifier);
+
     try {
-      const response = await fetch(`${API_URL}/auth/unified/login/initiate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier })
-      });
+      if (isEmailLogin) {
+        // Customer login - Email + OTP
+        setLoginType('customer');
+        const response = await fetch(`${API_URL}/auth/unified/login/initiate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        setUserType(data.user_type);
-        setRequiresOtp(data.requires_otp);
-        setRequiresPassword(data.requires_password);
-
-        // Determine next step
-        if (data.requires_otp) {
+        if (response.ok) {
           setStep('otp');
-        } else if (data.requires_password) {
-          setStep('password');
+        } else {
+          setError(data.detail || data.message || 'Login failed');
         }
       } else {
-        setError(data.message || 'Login failed');
+        // Employee/Admin login - Username + Password
+        setLoginType('employee');
+        setStep('password');
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -53,37 +57,62 @@ export default function Login() {
     }
   };
 
-  const handleVerifyLogin = async (e: React.FormEvent) => {
+  const handleCustomerVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const payload: any = { identifier };
-      
-      if (requiresOtp) payload.otp = otp;
-      if (requiresPassword) payload.password = password;
-      
-      payload.device_id = 'web-browser';
-      payload.device_name = navigator.userAgent;
-
       const response = await fetch(`${API_URL}/auth/unified/login/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          identifier,
+          otp,
+          device_id: 'web-browser',
+          device_name: navigator.userAgent
+        })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Save token
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-
-        // Redirect based on user type
-        navigate(data.redirect);
+        navigate(data.redirect || '/dashboard');
       } else {
-        setError(data.message || 'Verification failed');
+        setError(data.detail || data.message || 'Verification failed');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmployeeLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_URL}/auth/simple-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: identifier,
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate(data.redirect || '/admin/dashboard');
+      } else {
+        setError(data.detail || data.message || 'Login failed');
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -120,7 +149,7 @@ export default function Login() {
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            {step === 'identifier' && 'Welcome Back'}
+            {step === 'identifier' && 'Login to Your Account'}
             {step === 'otp' && 'Verify OTP'}
             {step === 'password' && 'Enter Password'}
           </h2>
@@ -131,12 +160,12 @@ export default function Login() {
             </div>
           )}
 
-          {/* Step 1: Identifier */}
+          {/* Step 1: Email or Username */}
           {step === 'identifier' && (
             <form onSubmit={handleInitiateLogin} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email, Phone, or Username
+                  Email or Username
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -145,10 +174,13 @@ export default function Login() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your email, phone, or username"
+                    placeholder="Enter your email or username"
                     required
                   />
                 </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  💡 Enter email for customer login or username for employee/admin login
+                </p>
               </div>
 
               <button
@@ -162,13 +194,13 @@ export default function Login() {
             </form>
           )}
 
-          {/* Step 2: OTP */}
+          {/* Step 2: OTP (for customers) */}
           {step === 'otp' && (
-            <form onSubmit={requiresPassword ? (e) => { e.preventDefault(); setStep('password'); } : handleVerifyLogin} className="space-y-4">
+            <form onSubmit={handleCustomerVerify} className="space-y-4">
               <div className="text-center mb-4">
                 <Mail className="w-12 h-12 text-blue-600 mx-auto mb-2" />
                 <p className="text-sm text-gray-600">
-                  We've sent a 6-digit code to your registered email
+                  We've sent a 6-digit code to {identifier}
                 </p>
               </div>
 
@@ -192,19 +224,29 @@ export default function Login() {
                 disabled={loading || otp.length !== 6}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {loading ? 'Verifying...' : requiresPassword ? 'Next' : 'Login'}
+                {loading ? 'Verifying...' : 'Login'}
                 <ArrowRight className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => {
+                  setStep('identifier');
+                  setError('');
+                }}
+                className="w-full text-gray-600 hover:text-gray-900 text-sm"
+              >
+                ← Back
               </button>
             </form>
           )}
 
-          {/* Step 3: Password (Super Admin & Employees) */}
+          {/* Step 3: Password (for employees/admin) */}
           {step === 'password' && (
-            <form onSubmit={handleVerifyLogin} className="space-y-4">
+            <form onSubmit={handleEmployeeLogin} className="space-y-4">
               <div className="text-center mb-4">
                 <Lock className="w-12 h-12 text-purple-600 mx-auto mb-2" />
                 <p className="text-sm text-gray-600">
-                  {userType === 'super_admin' ? 'Super Admin Authentication' : 'Employee Login'}
+                  Employee/Admin Authentication
                 </p>
               </div>
 
@@ -240,24 +282,17 @@ export default function Login() {
                 {loading ? 'Logging in...' : 'Login'}
                 <ArrowRight className="w-5 h-5" />
               </button>
-            </form>
-          )}
 
-          {/* Back button */}
-          {step !== 'identifier' && (
-            <button
-              onClick={() => {
-                if (step === 'password' && requiresOtp) {
-                  setStep('otp');
-                } else {
+              <button
+                onClick={() => {
                   setStep('identifier');
-                }
-                setError('');
-              }}
-              className="mt-4 w-full text-gray-600 hover:text-gray-900 text-sm"
-            >
-              ← Back
-            </button>
+                  setError('');
+                }}
+                className="w-full text-gray-600 hover:text-gray-900 text-sm"
+              >
+                ← Back
+              </button>
+            </form>
           )}
         </div>
 

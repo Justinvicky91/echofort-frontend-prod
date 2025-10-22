@@ -1,0 +1,12 @@
+{
+  "query": "\n-- Create Super Admin user\nINSERT INTO users (username, email, name, role, password_hash, is_active, created_at)\nVALUES (\n  'Echofort$Super$Admin',\n  'EchofortAI@gmail.com',\n  'Vigneshwaran J',\n  'super_admin',\n  '$2b$10$YourHashedPasswordHere', -- This will be replaced by actual bcrypt hash\n  true,\n  NOW()\n)\nON CONFLICT (email) DO UPDATE SET\n  username = EXCLUDED.username,\n  name = EXCLUDED.name,\n  role = EXCLUDED.role\nRETURNING id, username, email, role;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2y6sS8DpnU5zjJD.root --database 9Rouc7DxCXtQDEEF5GnzG8 --execute \n-- Create Super Admin user\nINSERT INTO users (username, email, name, role, password_hash, is_active, created_at)\nVALUES (\n  'Echofort$Super$Admin',\n  'EchofortAI@gmail.com',\n  'Vigneshwaran J',\n  'super_admin',\n  '$2b$10$YourHashedPasswordHere', -- This will be replaced by actual bcrypt hash\n  true,\n  NOW()\n)\nON CONFLICT (email) DO UPDATE SET\n  username = EXCLUDED.username,\n  name = EXCLUDED.name,\n  role = EXCLUDED.role\nRETURNING id, username, email, role;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1064 (42000) at line 3: You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 11 column 12 near \"CONFLICT (email) DO UPDATE SET",
+    "  username = EXCLUDED.username,",
+    "  name = EXCLUDED.name,",
+    "  role = EXCLUDED.role",
+    "RETURNING id, username, email, role\""
+  ]
+}
