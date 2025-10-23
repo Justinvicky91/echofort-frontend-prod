@@ -4,7 +4,7 @@ import {
   Users, DollarSign, Shield, TrendingUp, AlertTriangle, 
   CreditCard, Settings, LogOut, Menu, X, Bot, Lock,
   Gift, Database, BarChart3, Mail, HeadphonesIcon, Zap,
-  Activity, Globe, Cpu, Eye, Server, PieChart, Bell
+  Activity, Globe, Cpu, Eye, Server, PieChart, Bell, MessageCircle
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import api from '../../lib/api';
@@ -18,6 +18,8 @@ import CustomerManagement from '../../components/admin/CustomerManagement';
 import FinancialManagement from '../../components/admin/FinancialManagement';
 import ApprovalCenter from '../../components/admin/ApprovalCenter';
 import SystemConfiguration from '../../components/admin/SystemConfiguration';
+import WhatsAppConfig from '../../components/admin/WhatsAppConfig';
+import RecoveryCodes from '../../components/admin/RecoveryCodes';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -70,6 +72,8 @@ export default function SuperAdminDashboard() {
     { id: 'analytics', label: 'Deep Analytics', icon: BarChart3, color: 'from-blue-600 to-indigo-600' },
     { id: 'database', label: 'Data Core', icon: Database, color: 'from-gray-600 to-gray-800' },
     { id: 'system-config', label: 'System Config', icon: Settings, color: 'from-orange-500 to-red-500' },
+    { id: 'whatsapp-config', label: 'WhatsApp Support', icon: MessageCircle, color: 'from-green-500 to-emerald-500' },
+    { id: 'recovery-codes', label: 'Recovery Codes', icon: Lock, color: 'from-yellow-500 to-orange-500' },
   ];
 
   return (
@@ -253,6 +257,8 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'exemptions' && <CustomerExemptions />}
                 {activeSection === 'echofort-ai' && <EchoFortAI />}
                 {activeSection === 'system-config' && <SystemConfiguration />}
+                {activeSection === 'whatsapp-config' && <WhatsAppConfig />}
+                {activeSection === 'recovery-codes' && <RecoveryCodes />}
               </motion.div>
             </AnimatePresence>
           </div>

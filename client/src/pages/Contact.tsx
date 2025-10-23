@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Clock, MessageSquare, HelpCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -13,6 +13,20 @@ export default function Contact() {
     subject: "",
     message: ""
   });
+  
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+
+  useEffect(() => {
+    // Fetch WhatsApp number from backend
+    fetch('https://api.echofort.ai/admin/whatsapp-config')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.config.support_whatsapp) {
+          setWhatsappNumber(data.config.support_whatsapp);
+        }
+      })
+      .catch(err => console.error('Failed to fetch WhatsApp number:', err));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,9 +125,15 @@ export default function Contact() {
                     <div>
                       <h3 className="font-semibold mb-1">WhatsApp Support</h3>
                       <p className="text-muted-foreground text-sm mb-2">Mon-Sat, 9 AM - 7 PM IST</p>
-                      <a href="https://wa.me/919361440568" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        +91 936 144 0568
-                      </a>
+                      {whatsappNumber ? (
+                        <a href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                          {whatsappNumber}
+                        </a>
+                      ) : (
+                        <p className="text-muted-foreground text-sm">
+                          Contact support@echofort.ai
+                        </p>
+                      )}
                     </div>
                   </div>
 
