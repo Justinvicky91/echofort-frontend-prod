@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, Mail, Lock, ArrowRight, Loader2, User, Eye, EyeOff } from "lucide-react";
+import { Shield, Mail, Lock, ArrowRight, Loader2, User, Eye, EyeOff, Key } from "lucide-react";
 import { Link } from "wouter";
 import api from "@/lib/api";
 import { toast } from "sonner";
@@ -11,9 +11,13 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://api.echofort.ai';
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [step, setStep] = useState<"identifier" | "otp" | "password">("identifier");
+  const [step, setStep] = useState<"identifier" | "otp" | "password" | "mobile-otp" | "recovery">("identifier");
   const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
+  const [mobileOtp, setMobileOtp] = useState("");
+  const [recoveryCode, setRecoveryCode] = useState("");
+  const [tempToken, setTempToken] = useState("");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,24 +59,109 @@ export default function Login() {
 
     try {
       const response = await api.auth.verifyOTP(identifier, otp);
-      localStorage.setItem("auth_token", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
       
-      toast.success("Login successful!");
-      
-      // Redirect based on user role
-      const role = response.user.role;
-      if (role === "super_admin") {
-        setLocation("/super-admin");
-      } else if (role === "admin") {
-        setLocation("/admin");
-      } else if (role === "employee") {
-        setLocation("/employee");
+      // Check if user is Super Admin - require mobile OTP
+      if (response.user.role === "super_admin") {
+        setIsSuperAdmin(true);
+        setTempToken(response.temp_token || response.token);
+        
+        // Send mobile OTP
+        try {
+          await fetch(`${API_URL}/auth/send-mobile-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: identifier,
+              temp_token: response.temp_token || response.token 
+            })
+          });
+          toast.success("Mobile OTP sent! Check your phone.");
+          setStep("mobile-otp");
+        } catch (err) {
+          toast.error("Failed to send mobile OTP");
+        }
       } else {
-        setLocation("/dashboard");
+        // Regular users - login directly
+        localStorage.setItem("auth_token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+        toast.success("Login successful!");
+        
+        const role = response.user.role;
+        if (role === "admin") {
+          setLocation("/admin");
+        } else if (role === "employee") {
+          setLocation("/employee");
+        } else {
+          setLocation("/dashboard");
+        }
       }
     } catch (error: any) {
       toast.error(error.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMobileOTPVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/auth/verify-mobile-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: identifier,
+          mobile_otp: mobileOtp,
+          temp_token: tempToken
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        toast.success("Super Admin login successful!");
+        setLocation("/super-admin");
+      } else {
+        toast.error(data.detail || "Invalid mobile OTP");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRecoveryCodeVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/auth/verify-recovery-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: identifier,
+          recovery_code: recoveryCode,
+          temp_token: tempToken
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        toast.success("Super Admin login successful via recovery code!");
+        toast.info("Please update your mobile number in settings.");
+        setLocation("/super-admin");
+      } else {
+        toast.error(data.detail || "Invalid recovery code");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Verification failed");
     } finally {
       setLoading(false);
     }
@@ -349,6 +438,155 @@ export default function Login() {
                 }}
               >
                 ← Back
+              </Button>
+            </form>
+          )}
+
+          {/* Step 4: Mobile OTP (for Super Admin 2FA) */}
+          {step === "mobile-otp" && (
+            <form onSubmit={handleMobileOTPVerify} className="space-y-6">
+              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 mb-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="w-5 h-5 text-purple-400 mt-0.5" />
+                  <div>
+                    <p className="text-purple-400 font-semibold text-sm">Super Admin 2FA</p>
+                    <p className="text-gray-300 text-xs mt-1">
+                      Additional security layer required for Super Admin access
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  WhatsApp OTP
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Enter 6-digit OTP"
+                    value={mobileOtp}
+                    onChange={(e) => setMobileOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="pl-10 text-center text-2xl tracking-widest"
+                    maxLength={6}
+                    required
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  📱 OTP sent to WhatsApp: +91 936 144 0568
+                </p>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading || mobileOtp.length !== 6}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    Verify & Login
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => setStep("recovery")}
+              >
+                Use Recovery Code Instead
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setStep("identifier");
+                  setMobileOtp("");
+                  setOtp("");
+                }}
+              >
+                ← Cancel Login
+              </Button>
+            </form>
+          )}
+
+          {/* Step 5: Recovery Code (backup for lost mobile) */}
+          {step === "recovery" && (
+            <form onSubmit={handleRecoveryCodeVerify} className="space-y-6">
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-4">
+                <div className="flex items-start space-x-3">
+                  <Key className="w-5 h-5 text-yellow-400 mt-0.5" />
+                  <div>
+                    <p className="text-yellow-400 font-semibold text-sm">Recovery Code Login</p>
+                    <p className="text-gray-300 text-xs mt-1">
+                      Use this if your mobile is lost or hacked. Each code can only be used once.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Recovery Code
+                </label>
+                <div className="relative">
+                  <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="XXXX-XXXX"
+                    value={recoveryCode}
+                    onChange={(e) => setRecoveryCode(e.target.value.toUpperCase())}
+                    className="pl-10 text-center text-xl tracking-widest"
+                    maxLength={9}
+                    required
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Enter one of your backup recovery codes
+                </p>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading || recoveryCode.length < 8}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    Verify & Login
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => setStep("mobile-otp")}
+              >
+                ← Back to Mobile OTP
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setStep("identifier");
+                  setRecoveryCode("");
+                  setMobileOtp("");
+                  setOtp("");
+                }}
+              >
+                Cancel Login
               </Button>
             </form>
           )}
