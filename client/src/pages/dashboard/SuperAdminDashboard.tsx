@@ -17,6 +17,7 @@ import InfrastructureCosts from '../../components/admin/InfrastructureCosts';
 import CustomerManagement from '../../components/admin/CustomerManagement';
 import FinancialManagement from '../../components/admin/FinancialManagement';
 import ApprovalCenter from '../../components/admin/ApprovalCenter';
+import SystemConfiguration from '../../components/admin/SystemConfiguration';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -68,6 +69,7 @@ export default function SuperAdminDashboard() {
     { id: 'echofort-ai', label: 'EchoFort AI', icon: Bot, color: 'from-violet-500 to-purple-500' },
     { id: 'analytics', label: 'Deep Analytics', icon: BarChart3, color: 'from-blue-600 to-indigo-600' },
     { id: 'database', label: 'Data Core', icon: Database, color: 'from-gray-600 to-gray-800' },
+    { id: 'system-config', label: 'System Config', icon: Settings, color: 'from-orange-500 to-red-500' },
   ];
 
   return (
@@ -250,6 +252,7 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'vault' && <CallRecordingVault />}
                 {activeSection === 'exemptions' && <CustomerExemptions />}
                 {activeSection === 'echofort-ai' && <EchoFortAI />}
+                {activeSection === 'system-config' && <SystemConfiguration />}
               </motion.div>
             </AnimatePresence>
           </div>

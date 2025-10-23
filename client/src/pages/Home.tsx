@@ -273,13 +273,14 @@ export default function Home() {
                 <span className="text-sm font-medium">Trusted by 50,000+ Indians</span>
               </div>
               <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                India's First{" "}
-                <span className="gradient-text">AI-Powered</span>{" "}
-                Self-Evolving Scam Protection
+                Complete Digital{" "}
+                <span className="gradient-text">Family Protection</span>{" "}
+                Platform
               </h1>
               <p className="text-xl text-muted-foreground mb-8">
-                Protect yourself and your family from scams with real-time AI call screening, 
-                GPS tracking, and comprehensive child protection features. 
+                Protect your family from scams, harassment, and online threats with AI-powered call screening, 
+                <strong className="text-foreground"> child protection</strong>, parental controls, and 
+                <strong className="text-foreground"> immediate self-complaint filing</strong> technology. 
                 <strong className="text-foreground"> ₹15 Crore+ protected</strong> for our users.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
