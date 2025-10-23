@@ -7,6 +7,9 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import webhookRoutes from "../routes/webhooks";
+import { startEscalationCron } from "../jobs/ticketEscalation";
+import { initializeAutoResponses } from "../services/ticketService";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,6 +38,8 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  // Webhook routes
+  app.use("/webhooks", webhookRoutes);
   // tRPC API
   app.use(
     "/api/trpc",
@@ -59,6 +64,10 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Initialize support system
+    initializeAutoResponses().catch(console.error);
+    startEscalationCron();
   });
 }
 

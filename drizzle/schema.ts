@@ -384,3 +384,140 @@ export const otps = mysqlTable("otps", {
 
 export type Otp = typeof otps.$inferSelect;
 
+
+
+/**
+ * Support Tickets Table
+ * Customer support ticket management system
+ */
+export const supportTickets = mysqlTable("support_tickets", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  ticketNumber: varchar("ticketNumber", { length: 20 }).notNull(), // Format: TKT-YYYYMMDD-XXXX
+  customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
+  customerName: varchar("customerName", { length: 100 }),
+  customerPhone: varchar("customerPhone", { length: 15 }),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  status: varchar("status", { length: 20 }).default("open"), // open, in_progress, auto_responded, resolved, closed
+  priority: varchar("priority", { length: 20 }).default("normal"), // low, normal, high, urgent
+  assignedTo: varchar("assignedTo", { length: 64 }), // Employee user ID
+  resolvedAt: timestamp("resolvedAt"),
+  firstResponseAt: timestamp("firstResponseAt"),
+  category: varchar("category", { length: 50 }), // technical, billing, general, complaint
+  source: varchar("source", { length: 20 }).default("email"), // email, whatsapp, dashboard, phone
+  
+  // Escalation tracking
+  escalatedToAdmin: boolean("escalatedToAdmin").default(false),
+  escalatedToSuperAdmin: boolean("escalatedToSuperAdmin").default(false),
+  escalationReason: text("escalationReason"),
+  
+  // Metadata
+  userId: varchar("userId", { length: 64 }), // If customer is registered user
+  subscriptionId: varchar("subscriptionId", { length: 64 }),
+  attachments: text("attachments"), // JSON array of file URLs
+  tags: text("tags"), // JSON array of tags
+  
+  // Auto-response tracking
+  autoResponseUsed: boolean("autoResponseUsed").default(false),
+  autoResponseTemplateId: varchar("autoResponseTemplateId", { length: 64 }),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+});
+
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type InsertSupportTicket = typeof supportTickets.$inferInsert;
+
+/**
+ * Ticket Responses Table
+ * All messages in a support ticket thread
+ */
+export const ticketResponses = mysqlTable("ticket_responses", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  ticketId: varchar("ticketId", { length: 64 }).notNull(),
+  senderType: varchar("senderType", { length: 20 }).notNull(), // customer, employee, system
+  senderId: varchar("senderId", { length: 64 }), // Employee user ID if sender is employee
+  senderEmail: varchar("senderEmail", { length: 320 }), // Customer email if sender is customer
+  senderPhone: varchar("senderPhone", { length: 15 }), // For WhatsApp messages
+  message: text("message").notNull(),
+  isInternalNote: boolean("isInternalNote").default(false), // Internal notes not sent to customer
+  sentVia: varchar("sentVia", { length: 20 }).default("email"), // email, whatsapp, dashboard
+  attachments: text("attachments"), // JSON array of file URLs
+  createdAt: timestamp("createdAt").defaultNow(),
+});
+
+export type TicketResponse = typeof ticketResponses.$inferSelect;
+export type InsertTicketResponse = typeof ticketResponses.$inferInsert;
+
+/**
+ * Ticket Auto-Responses Table
+ * Chatbot templates for common questions
+ */
+export const ticketAutoResponses = mysqlTable("ticket_auto_responses", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  keyword: varchar("keyword", { length: 100 }).notNull(),
+  responseTemplate: text("responseTemplate").notNull(),
+  category: varchar("category", { length: 50 }),
+  enabled: boolean("enabled").default(true),
+  usageCount: int("usageCount").default(0),
+  successRate: int("successRate").default(0), // Percentage of tickets resolved without human intervention
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+});
+
+export type TicketAutoResponse = typeof ticketAutoResponses.$inferSelect;
+export type InsertTicketAutoResponse = typeof ticketAutoResponses.$inferInsert;
+
+/**
+ * Ticket Assignments Table
+ * Tracks ticket assignment history
+ */
+export const ticketAssignments = mysqlTable("ticket_assignments", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  ticketId: varchar("ticketId", { length: 64 }).notNull(),
+  assignedTo: varchar("assignedTo", { length: 64 }).notNull(), // Employee user ID
+  assignedBy: varchar("assignedBy", { length: 64 }), // Admin/System who assigned
+  reason: text("reason"),
+  createdAt: timestamp("createdAt").defaultNow(),
+});
+
+export type TicketAssignment = typeof ticketAssignments.$inferSelect;
+
+/**
+ * Support Metrics Table
+ * Daily/weekly/monthly support performance metrics
+ */
+export const supportMetrics = mysqlTable("support_metrics", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD
+  period: varchar("period", { length: 20 }).default("daily"), // daily, weekly, monthly
+  
+  // Ticket metrics
+  totalTickets: int("totalTickets").default(0),
+  openTickets: int("openTickets").default(0),
+  resolvedTickets: int("resolvedTickets").default(0),
+  closedTickets: int("closedTickets").default(0),
+  
+  // Response metrics
+  avgFirstResponseTime: int("avgFirstResponseTime").default(0), // in minutes
+  avgResolutionTime: int("avgResolutionTime").default(0), // in minutes
+  
+  // Escalation metrics
+  escalatedToAdmin: int("escalatedToAdmin").default(0),
+  escalatedToSuperAdmin: int("escalatedToSuperAdmin").default(0),
+  
+  // Auto-response metrics
+  autoResponsesUsed: int("autoResponsesUsed").default(0),
+  autoResponseSuccessRate: int("autoResponseSuccessRate").default(0), // percentage
+  
+  // Employee metrics
+  employeeId: varchar("employeeId", { length: 64 }), // If tracking per-employee metrics
+  ticketsHandled: int("ticketsHandled").default(0),
+  
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+});
+
+export type SupportMetric = typeof supportMetrics.$inferSelect;
+
