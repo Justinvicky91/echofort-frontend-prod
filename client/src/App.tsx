@@ -14,7 +14,7 @@ import GPSTracking from "./pages/features/GPSTracking";
 import CallLogs from "./pages/features/CallLogs";
 import ScreenTime from "./pages/features/ScreenTime";
 import SuperAdminDashboard from './pages/dashboard/SuperAdminDashboard';
-import SuperAdminLogin from './pages/SuperAdminLogin';
+
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import EmployeeDashboard from "./pages/dashboard/EmployeeDashboard";
 import UserDashboard from "./pages/dashboard/UserDashboard";
@@ -57,7 +57,7 @@ function Router() {
       
       {/* Dashboard routes (without /dashboard prefix) */}
       <Route path="/dashboard" component={UserDashboard} />
-      <Route path="/super-admin-login" component={SuperAdminLogin} />
+
       <Route path="/super-admin" component={SuperAdminDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/employee" component={EmployeeDashboard} />
