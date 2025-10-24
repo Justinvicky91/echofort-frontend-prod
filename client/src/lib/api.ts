@@ -360,6 +360,17 @@ class ApiService {
     });
   }
 
+  async getTicketConversation(ticketId: number) {
+    return this.request(`/admin/support/ticket/${ticketId}/conversation`);
+  }
+
+  async replyToTicket(ticketId: number, data: { message: string; status?: string }) {
+    return this.request(`/admin/support/ticket/${ticketId}/reply`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
   // Accounting
   async getRecentTransactions() {
     return this.request('/admin/accounting/transactions/recent');

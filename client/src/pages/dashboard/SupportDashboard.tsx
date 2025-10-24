@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Headphones, Ticket, Clock, CheckCircle, AlertCircle, TrendingUp, MessageSquare } from 'lucide-react';
+import { Headphones, Ticket, Clock, CheckCircle, AlertCircle, TrendingUp, MessageSquare, X, Send, User, Mail, Calendar, Tag } from 'lucide-react';
 import api from '../../lib/api';
 
 export default function SupportDashboard() {
@@ -7,6 +7,11 @@ export default function SupportDashboard() {
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [conversation, setConversation] = useState<any[]>([]);
+  const [replyText, setReplyText] = useState('');
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -24,6 +29,66 @@ export default function SupportDashboard() {
       console.error('Failed to fetch support data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openTicket = async (ticket: any) => {
+    setSelectedTicket(ticket);
+    setShowTicketModal(true);
+    try {
+      const conversationData = await api.getTicketConversation(ticket.id);
+      setConversation(conversationData.messages || []);
+    } catch (error) {
+      console.error('Failed to fetch conversation:', error);
+      setConversation([]);
+    }
+  };
+
+  const closeTicketModal = () => {
+    setShowTicketModal(false);
+    setSelectedTicket(null);
+    setConversation([]);
+    setReplyText('');
+  };
+
+  const sendReply = async () => {
+    if (!replyText.trim() || !selectedTicket) return;
+    
+    setSending(true);
+    try {
+      await api.replyToTicket(selectedTicket.id, {
+        message: replyText,
+        status: 'in_progress'
+      });
+      
+      // Add reply to conversation
+      setConversation([...conversation, {
+        id: Date.now(),
+        from: 'support',
+        message: replyText,
+        created_at: new Date().toISOString(),
+        is_employee: true
+      }]);
+      
+      setReplyText('');
+      fetchDashboardData(); // Refresh ticket list
+    } catch (error) {
+      console.error('Failed to send reply:', error);
+      alert('Failed to send reply. Please try again.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const updateTicketStatus = async (ticketId: number, newStatus: string) => {
+    try {
+      await api.updateTicketStatus(ticketId, newStatus);
+      fetchDashboardData();
+      if (selectedTicket?.id === ticketId) {
+        setSelectedTicket({ ...selectedTicket, status: newStatus });
+      }
+    } catch (error) {
+      console.error('Failed to update ticket status:', error);
     }
   };
 
@@ -61,28 +126,28 @@ export default function SupportDashboard() {
         ))}
       </div>
 
-      {/* Zoho Desk Integration Status */}
+      {/* Email Integration Status */}
       <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/20 mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-500 rounded-lg">
-              <Headphones className="w-5 h-5 text-white" />
+              <Mail className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">Zoho Desk Integration</h3>
-              <p className="text-sm text-gray-400">Syncing tickets in real-time</p>
+              <h3 className="font-semibold text-white">Email Support System</h3>
+              <p className="text-sm text-gray-400">Cloudflare → Gmail → Make.com → Webhook</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm text-green-400">Connected</span>
+            <span className="text-sm text-green-400">Active</span>
           </div>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex gap-2 mb-6">
-        {['all', 'open', 'pending', 'resolved', 'urgent'].map((f) => (
+        {['all', 'open', 'in_progress', 'resolved', 'urgent'].map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -92,7 +157,7 @@ export default function SupportDashboard() {
                 : 'bg-gray-800/40 text-gray-400 hover:bg-gray-700/50'
             }`}
           >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+            {f.charAt(0).toUpperCase() + f.slice(1).replace('_', ' ')}
           </button>
         ))}
       </div>
@@ -126,12 +191,12 @@ export default function SupportDashboard() {
               </tr>
             ) : (
               tickets.map((ticket) => (
-                <tr key={ticket.id} className="hover:bg-gray-700/30">
+                <tr key={ticket.id} className="hover:bg-gray-700/30 cursor-pointer" onClick={() => openTicket(ticket)}>
                   <td className="px-6 py-4 text-sm text-white font-mono">
                     #{ticket.id}
                   </td>
                   <td className="px-6 py-4 text-sm text-white">
-                    {ticket.customer_name}
+                    {ticket.customer_name || ticket.from_email}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">
                     {ticket.subject}
@@ -149,17 +214,23 @@ export default function SupportDashboard() {
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       ticket.status === 'resolved' ? 'bg-green-500/20 text-green-400' :
-                      ticket.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                      ticket.status === 'in_progress' ? 'bg-yellow-500/20 text-yellow-400' :
                       'bg-blue-500/20 text-blue-400'
                     }`}>
-                      {ticket.status}
+                      {ticket.status.replace('_', ' ')}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-400">
                     {new Date(ticket.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-sm text-right">
-                    <button className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openTicket(ticket);
+                      }}
+                      className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors"
+                    >
                       <MessageSquare className="w-4 h-4" />
                     </button>
                   </td>
@@ -169,6 +240,128 @@ export default function SupportDashboard() {
           </tbody>
         </table>
       </div>
+
+      {/* Ticket Detail Modal */}
+      {showTicketModal && selectedTicket && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-700">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-white">Ticket #{selectedTicket.id}</h2>
+                <p className="text-gray-400 text-sm mt-1">{selectedTicket.subject}</p>
+              </div>
+              <button
+                onClick={closeTicketModal}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            {/* Ticket Info */}
+            <div className="p-6 border-b border-gray-700 bg-gray-900/50">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Customer</p>
+                    <p className="text-sm text-white">{selectedTicket.customer_name || 'Unknown'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Email</p>
+                    <p className="text-sm text-white">{selectedTicket.from_email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Created</p>
+                    <p className="text-sm text-white">{new Date(selectedTicket.created_at).toLocaleString()}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Status</p>
+                    <select
+                      value={selectedTicket.status}
+                      onChange={(e) => updateTicketStatus(selectedTicket.id, e.target.value)}
+                      className="text-sm bg-gray-700 text-white rounded px-2 py-1 border border-gray-600"
+                    >
+                      <option value="open">Open</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="resolved">Resolved</option>
+                      <option value="closed">Closed</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Conversation History */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {conversation.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                  No conversation history yet
+                </div>
+              ) : (
+                conversation.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.is_employee ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[70%] rounded-2xl p-4 ${
+                        msg.is_employee
+                          ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
+                          : 'bg-gray-700 text-gray-100'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-semibold">
+                          {msg.is_employee ? 'Support Team' : selectedTicket.customer_name || 'Customer'}
+                        </span>
+                        <span className="text-xs opacity-70">
+                          {new Date(msg.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Reply Editor */}
+            <div className="p-6 border-t border-gray-700 bg-gray-900/50">
+              <div className="flex gap-3">
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Type your response..."
+                  rows={3}
+                  className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-3 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+                />
+                <button
+                  onClick={sendReply}
+                  disabled={sending || !replyText.trim()}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  {sending ? 'Sending...' : 'Send'}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Reply will be sent from noreply@echofort.ai to {selectedTicket.from_email}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
