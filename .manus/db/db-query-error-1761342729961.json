@@ -1,0 +1,8 @@
+{
+  "query": "CREATE INDEX IF NOT EXISTS idx_support_tickets_email ON support_tickets(customer_email);\nCREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);\nCREATE INDEX IF NOT EXISTS idx_support_tickets_created ON support_tickets(created_at DESC);\nCREATE INDEX IF NOT EXISTS idx_ticket_conversations_ticket ON ticket_conversations(ticket_id);\nCREATE INDEX IF NOT EXISTS idx_ticket_conversations_created ON ticket_conversations(created_at DESC);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2y6sS8DpnU5zjJD.root --database 9Rouc7DxCXtQDEEF5GnzG8 --execute CREATE INDEX IF NOT EXISTS idx_support_tickets_email ON support_tickets(customer_email);\nCREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);\nCREATE INDEX IF NOT EXISTS idx_support_tickets_created ON support_tickets(created_at DESC);\nCREATE INDEX IF NOT EXISTS idx_ticket_conversations_ticket ON ticket_conversations(ticket_id);\nCREATE INDEX IF NOT EXISTS idx_ticket_conversations_created ON ticket_conversations(created_at DESC);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1072 (42000) at line 1: column does not exist: customer_email"
+  ]
+}

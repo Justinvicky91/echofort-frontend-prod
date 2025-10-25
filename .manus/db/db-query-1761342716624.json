@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS ticket_conversations (\n    id SERIAL PRIMARY KEY,\n    ticket_id INTEGER REFERENCES support_tickets(id) ON DELETE CASCADE,\n    sender_type VARCHAR(50) NOT NULL,\n    sender_email VARCHAR(255),\n    sender_name VARCHAR(255),\n    message TEXT NOT NULL,\n    created_at TIMESTAMP DEFAULT NOW()\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2y6sS8DpnU5zjJD.root --database 9Rouc7DxCXtQDEEF5GnzG8 --execute CREATE TABLE IF NOT EXISTS ticket_conversations (\n    id SERIAL PRIMARY KEY,\n    ticket_id INTEGER REFERENCES support_tickets(id) ON DELETE CASCADE,\n    sender_type VARCHAR(50) NOT NULL,\n    sender_email VARCHAR(255),\n    sender_name VARCHAR(255),\n    message TEXT NOT NULL,\n    created_at TIMESTAMP DEFAULT NOW()\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1770
+}

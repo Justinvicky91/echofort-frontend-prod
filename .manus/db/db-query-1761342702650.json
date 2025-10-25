@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS support_tickets (\n    id SERIAL PRIMARY KEY,\n    customer_email VARCHAR(255) NOT NULL,\n    customer_name VARCHAR(255),\n    subject VARCHAR(500) NOT NULL,\n    message TEXT NOT NULL,\n    status VARCHAR(50) DEFAULT 'open',\n    priority VARCHAR(50) DEFAULT 'medium',\n    assigned_to INTEGER,\n    created_at TIMESTAMP DEFAULT NOW(),\n    updated_at TIMESTAMP DEFAULT NOW(),\n    resolved_at TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2y6sS8DpnU5zjJD.root --database 9Rouc7DxCXtQDEEF5GnzG8 --execute CREATE TABLE IF NOT EXISTS support_tickets (\n    id SERIAL PRIMARY KEY,\n    customer_email VARCHAR(255) NOT NULL,\n    customer_name VARCHAR(255),\n    subject VARCHAR(500) NOT NULL,\n    message TEXT NOT NULL,\n    status VARCHAR(50) DEFAULT 'open',\n    priority VARCHAR(50) DEFAULT 'medium',\n    assigned_to INTEGER,\n    created_at TIMESTAMP DEFAULT NOW(),\n    updated_at TIMESTAMP DEFAULT NOW(),\n    resolved_at TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2529
+}
