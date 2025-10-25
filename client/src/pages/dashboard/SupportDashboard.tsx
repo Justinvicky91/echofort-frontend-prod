@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Headphones, Ticket, Clock, CheckCircle, AlertCircle, TrendingUp, MessageSquare, X, Send, User, Mail, Calendar, Tag } from 'lucide-react';
+import { Headphones, Ticket, Clock, CheckCircle, AlertCircle, TrendingUp, MessageSquare, X, Send, User, Mail, Calendar, Tag, MessageCircle } from 'lucide-react';
 import api from '../../lib/api';
 
 export default function SupportDashboard() {
@@ -196,7 +196,15 @@ export default function SupportDashboard() {
                     #{ticket.id}
                   </td>
                   <td className="px-6 py-4 text-sm text-white">
-                    {ticket.customer_name || ticket.from_email}
+                    <div className="flex items-center gap-2">
+                      {ticket.source === 'whatsapp' && (
+                        <div title="WhatsApp"><MessageCircle className="w-4 h-4 text-green-400" /></div>
+                      )}
+                      {ticket.source === 'email' && (
+                        <div title="Email"><Mail className="w-4 h-4 text-blue-400" /></div>
+                      )}
+                      <span>{ticket.customer_name || ticket.customer_email || ticket.customer_phone}</span>
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">
                     {ticket.subject}
