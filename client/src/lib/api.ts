@@ -61,7 +61,7 @@ class ApiService {
       });
     },
     sendOTP: async (email: string) => {
-      return this.request('/auth/otp/send', {
+      return this.request('/auth/otp/request', {
         method: 'POST',
         body: JSON.stringify({ email })
       });

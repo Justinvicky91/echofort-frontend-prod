@@ -38,7 +38,7 @@ export default function Login() {
       if (isEmailLogin) {
         // Customer login - Email + OTP
         setLoginType('customer');
-        await api.auth.sendOTP(identifier);
+        await api.initiateLogin(identifier);
         toast.success("OTP sent to your email!");
         setStep("otp");
       } else {
@@ -58,7 +58,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await api.auth.verifyOTP(identifier, otp);
+      const response = await api.verifyLogin({ identifier, otp, device_id: 'web-browser', device_name: navigator.userAgent });
       
       // Check if user is Super Admin - require mobile OTP
       if (response.user.role === "super_admin") {
