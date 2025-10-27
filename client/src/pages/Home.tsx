@@ -274,8 +274,8 @@ export default function Home() {
               </div>
               <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 Complete Digital{" "}
-                <span className="gradient-text">Family Protection</span>{" "}
-                Platform
+                <span className="gradient-text">Family AI Protection</span>{" "}
+                Platform From Scam & Harassments
               </h1>
               <p className="text-xl text-muted-foreground mb-8">
                 Protect your family from scams, harassment, and online threats with AI-powered call screening, 
