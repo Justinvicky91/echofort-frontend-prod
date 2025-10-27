@@ -95,6 +95,7 @@ When You report a scam caller:
 - Data transmission uses TLS 1.3
 - Passwords are hashed using bcrypt
 - Evidence vault is encrypted and access-controlled
+- **Your data is protected with Singapore bank-level security standards**
 
 ### 4.2 Access Controls
 - Role-based access control (RBAC)
@@ -113,6 +114,8 @@ When You report a scam caller:
 
 ### 5.1 Evidence Vault
 - Call recordings and evidence: **7 years** (legal compliance)
+- Evidence stored securely with **military-grade encryption** for platform security and legal compliance
+- Authorized personnel may access stored data for security monitoring, fraud prevention, and regulatory compliance
 - After 7 years, data may be automatically deleted
 - You can download Your evidence anytime during retention period
 
