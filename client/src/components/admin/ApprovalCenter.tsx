@@ -31,7 +31,13 @@ export default function ApprovalCenter() {
   const fetchApprovals = async () => {
     try {
       const data = await api.getApprovals();
-      setApprovals(data || getSampleApprovals());
+      // Ensure data is an array before setting
+      if (Array.isArray(data)) {
+        setApprovals(data);
+      } else {
+        console.warn('API returned non-array data, using sample data');
+        setApprovals(getSampleApprovals());
+      }
     } catch (error) {
       console.warn('Failed to fetch approvals, using sample data');
       setApprovals(getSampleApprovals());
