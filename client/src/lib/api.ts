@@ -513,12 +513,12 @@ class ApiService {
 
   // YouTube Videos
   async getYouTubeVideos() {
-    return this.request('/public/youtube-videos');
+    return this.request('/api/public/youtube/all');
   }
 
   // Live Scam Alerts
   async getLiveScamAlerts() {
-    return this.request('/public/scam-alerts');
+    return this.request('/api/public/scam-alerts/live');
   }
 
   // Job Openings/Requirements
