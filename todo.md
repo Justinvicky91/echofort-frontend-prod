@@ -260,3 +260,52 @@
 - [x] Verify live scam alerts auto-refresh - Fixed API endpoint paths
 
 
+
+
+## 🎁 PROMO CODE SYSTEM (Oct 28, 2025 - NEW FEATURE REQUEST)
+
+### Backend Requirements
+- [x] Create promo_codes table (code, discount_percentage, created_by, created_at, expires_at, max_uses, current_uses)
+- [x] Create promo_code_usage table (user_id, promo_code_id, used_at, subscription_id, commission_amount)
+- [x] API: POST /api/promo-codes/create (create promo code for specific user)
+- [x] API: GET /api/promo-codes/list (list all promo codes with analytics)
+- [x] API: GET /api/promo-codes/analytics/{code} (usage stats, commission tracking)
+- [x] API: POST /api/promo-codes/validate (validate promo code during signup)
+- [x] API: GET /api/promo-codes/commission-report (commission tracking per referrer)
+- [x] Business Logic: 10% discount on Personal (₹799) and Family (₹1499) packages only
+- [x] Business Logic: Calculate commission for referrer (10% of final amount)
+- [x] Business Logic: Track signup source (direct vs promo code)
+- [x] Deployed to Railway via GitHub (commit: dfa8a33)
+
+### Frontend Requirements
+- [ ] Signup page: Add "Have a promo code?" input field (optional)
+- [ ] Signup page: Real-time promo code validation with discount preview
+- [ ] Signup page: Show original price vs discounted price
+- [ ] Pricing page: Add promo code input field
+- [ ] Super Admin Dashboard: New "Promo Codes" section
+- [ ] Super Admin: Create promo code form (assign to user, set expiry, max uses)
+- [ ] Super Admin: Promo code analytics table (code, uses, revenue, commission)
+- [ ] Super Admin: Commission dashboard (total commission per referrer)
+- [ ] Super Admin: Export commission report (CSV/PDF)
+
+### Mobile App Requirements
+- [ ] Android: Add promo code input on signup screen
+- [ ] Android: Promo code validation API integration
+- [ ] Android: Show discount preview
+- [ ] iOS: Add promo code input on signup screen
+- [ ] iOS: Promo code validation API integration
+- [ ] iOS: Show discount preview
+
+### Database Schema
+- [x] promo_codes table with indexes
+- [x] promo_code_usage table with foreign keys
+- [x] Add promo_code_id to subscriptions table
+- [ ] Run migration on Railway PostgreSQL (migrations/012_promo_codes.sql)
+
+## 📢 WHISPER FEATURE (Oct 28, 2025 - MISSING FROM PRICING)
+
+- [x] Add "Whisper (Real-time Voice Analysis Alerts)" to Personal package (₹799/month)
+- [x] Add "Whisper (Real-time Voice Analysis Alerts)" to Family package (₹1499/month)
+- [x] Update pricing page frontend with Whisper feature
+- [ ] Whisper = Real-time voice analysis notifications during calls (scam patterns, threatening language, loan harassment, Trust Factor alerts)
+

@@ -21,6 +21,7 @@ export default function Signup() {
     countryCode: "+91",
     phone: "",
     plan: "personal",
+    promoCode: "",
     address: "",
     city: "",
     state: "",
@@ -33,6 +34,14 @@ export default function Signup() {
     termsAccepted: false,
     dataConsentAccepted: false,
   });
+
+  const [promoValidation, setPromoValidation] = useState<{
+    valid: boolean;
+    discount?: number;
+    finalAmount?: number;
+    originalAmount?: number;
+    message?: string;
+  } | null>(null);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
