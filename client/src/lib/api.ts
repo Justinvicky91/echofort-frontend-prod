@@ -61,12 +61,17 @@ class ApiService {
       });
     },
     sendOTP: async (email: string) => {
+      // Normalize email (lowercase, trim)
+      const normalizedEmail = email.toLowerCase().trim();
       return this.request('/auth/otp/request', {
         method: 'POST',
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: normalizedEmail })
       });
     },
     verifyOTP: async (email: string, otp: string) => {
+      // Normalize email (lowercase, trim)
+      const normalizedEmail = email.toLowerCase().trim();
+      
       // Generate device_id from browser fingerprint or use stored value
       let device_id = localStorage.getItem('echofort_device_id');
       if (!device_id) {
@@ -77,7 +82,7 @@ class ApiService {
       
       return this.request('/auth/otp/verify', {
         method: 'POST',
-        body: JSON.stringify({ email, otp, device_id })
+        body: JSON.stringify({ email: normalizedEmail, otp, device_id })
       });
     }
   };
