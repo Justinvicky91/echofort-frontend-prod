@@ -198,3 +198,15 @@
 - [x] Export evidence for law enforcement
 - [x] Update Privacy Policy with subtle wording (Singapore bank-level security)
 
+
+
+
+## 🐛 UI Bugs (Reported - Oct 27, 2025)
+
+- [ ] Browser tab title showing %VITE_APP_TITLE% instead of "EchoFort"
+- [ ] Homepage alignment issues and gaps
+- [ ] YouTube videos section not displaying
+- [ ] Live scam alerts sidebar not auto-refreshing
+- [ ] Excessive white space between sections
+- [ ] Layout responsiveness issues
+
