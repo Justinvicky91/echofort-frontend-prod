@@ -378,29 +378,6 @@
 - [ ] Need backend endpoint for WhatsApp OTP send/verify
 
 
-## 🔐 PASSWORD AUTHENTICATION (Oct 28, 2025)
-
-### Signup Page
-- [ ] Add password field to signup form
-- [ ] Add confirm password field
-- [ ] Password strength indicator
-- [ ] Store hashed password in database
-
-### Login Page
-- [ ] Add toggle between OTP and Password login
-- [ ] Password input field
-- [ ] "Forgot Password" link
-- [ ] Remember me checkbox
-
-### Backend
-- [ ] POST /auth/password/set - Set password for user
-- [ ] POST /auth/password/login - Login with email + password
-- [ ] POST /auth/password/forgot - Send OTP for password reset
-- [ ] POST /auth/password/reset - Reset password with OTP
-- [ ] Password hashing (bcrypt)
-- [ ] Add password column to users table
-
-
 ## 🔐 PASSWORD AUTHENTICATION (Oct 28, 2025) ✅ COMPLETE
 
 ### Signup Page
@@ -450,3 +427,11 @@
 2. Login with OTP OR password (their choice)
 3. Reset forgotten password via email OTP
 4. All password operations working on both frontend and backend
+
+
+## 🔐 SUPER ADMIN PASSWORD FIX (Oct 28, 2025)
+
+- [ ] Change super admin 2FA from WhatsApp OTP to WhatsApp Password
+- [ ] Flow: Email → Email OTP → Verify → WhatsApp Password → Login
+- [ ] Remove mobile-otp step for super admin
+- [ ] Add password verification after email OTP for super admin
