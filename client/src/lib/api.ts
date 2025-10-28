@@ -67,9 +67,17 @@ class ApiService {
       });
     },
     verifyOTP: async (email: string, otp: string) => {
+      // Generate device_id from browser fingerprint or use stored value
+      let device_id = localStorage.getItem('echofort_device_id');
+      if (!device_id) {
+        // Generate unique device ID
+        device_id = `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('echofort_device_id', device_id);
+      }
+      
       return this.request('/auth/otp/verify', {
         method: 'POST',
-        body: JSON.stringify({ email, otp })
+        body: JSON.stringify({ email, otp, device_id })
       });
     }
   };

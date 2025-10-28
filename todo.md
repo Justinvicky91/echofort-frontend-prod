@@ -309,3 +309,37 @@
 - [x] Update pricing page frontend with Whisper feature
 - [ ] Whisper = Real-time voice analysis notifications during calls (scam patterns, threatening language, loan harassment, Trust Factor alerts)
 
+
+
+## 🎯 GEMINI ANALYSIS GAPS (Oct 28, 2025 - CRITICAL)
+
+### P0 - Must Fix Before Launch
+- [ ] Execute live payment test (Personal plan with real payment)
+- [ ] Add "Justice Served" success screen after complaint filing
+- [ ] Add "Share to WhatsApp" button on success screen
+- [ ] Add "Share to Twitter/X" button on success screen
+- [ ] Generate shareable complaint images with branding
+- [x] Verify Google Analytics is tracking (check dashboard) - Implemented tracking code
+- [ ] Add WhatsApp/SMS scanning screenshots to homepage
+- [ ] Make "1-Click Complaint" feature prominent on homepage
+
+### P1 - Should Fix Before Launch
+- [ ] Set up Sentry error monitoring
+- [ ] Configure conversion funnel in Google Analytics
+- [ ] Connect "Chat with us" widget to support system
+- [ ] Create press release
+- [ ] Record demo video (showing 1-Click Complaint)
+- [ ] Prepare social media launch posts
+
+### P2 - Fix After Launch
+- [ ] Create "My Complaints" dashboard for users
+- [ ] Add family alert feed (real-time notifications)
+- [ ] Add UPI/Payment fraud detection (future feature)
+
+
+## 🐛 CRITICAL BUG - Login Failing (Oct 28, 2025)
+
+- [x] Fix OTP verification - missing `device_id` parameter
+- [x] Frontend not sending device_id in /auth/otp/verify request
+- [x] Backend requires: email, otp, device_id
+- [x] Generate device_id from browser fingerprint or UUID
