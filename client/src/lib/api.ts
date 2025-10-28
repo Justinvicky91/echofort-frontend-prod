@@ -84,6 +84,39 @@ class ApiService {
         method: 'POST',
         body: JSON.stringify({ email: normalizedEmail, otp, device_id })
       });
+    },
+    setPassword: async (data: { email: string; password: string }) => {
+      const normalizedEmail = data.email.toLowerCase().trim();
+      return this.request('/auth/password/set', {
+        method: 'POST',
+        body: JSON.stringify({ email: normalizedEmail, password: data.password })
+      });
+    },
+    loginWithPassword: async (email: string, password: string) => {
+      const normalizedEmail = email.toLowerCase().trim();
+      let device_id = localStorage.getItem('echofort_device_id');
+      if (!device_id) {
+        device_id = `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('echofort_device_id', device_id);
+      }
+      return this.request('/auth/password/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: normalizedEmail, password, device_id })
+      });
+    },
+    forgotPassword: async (email: string) => {
+      const normalizedEmail = email.toLowerCase().trim();
+      return this.request('/auth/password/forgot', {
+        method: 'POST',
+        body: JSON.stringify({ email: normalizedEmail })
+      });
+    },
+    resetPassword: async (email: string, otp: string, new_password: string) => {
+      const normalizedEmail = email.toLowerCase().trim();
+      return this.request('/auth/password/reset', {
+        method: 'POST',
+        body: JSON.stringify({ email: normalizedEmail, otp, new_password })
+      });
     }
   };
 

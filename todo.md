@@ -376,3 +376,77 @@
 - [ ] Need WhatsApp Business API integration
 - [ ] Need 2FA flow in frontend
 - [ ] Need backend endpoint for WhatsApp OTP send/verify
+
+
+## 🔐 PASSWORD AUTHENTICATION (Oct 28, 2025)
+
+### Signup Page
+- [ ] Add password field to signup form
+- [ ] Add confirm password field
+- [ ] Password strength indicator
+- [ ] Store hashed password in database
+
+### Login Page
+- [ ] Add toggle between OTP and Password login
+- [ ] Password input field
+- [ ] "Forgot Password" link
+- [ ] Remember me checkbox
+
+### Backend
+- [ ] POST /auth/password/set - Set password for user
+- [ ] POST /auth/password/login - Login with email + password
+- [ ] POST /auth/password/forgot - Send OTP for password reset
+- [ ] POST /auth/password/reset - Reset password with OTP
+- [ ] Password hashing (bcrypt)
+- [ ] Add password column to users table
+
+
+## 🔐 PASSWORD AUTHENTICATION (Oct 28, 2025) ✅ COMPLETE
+
+### Signup Page
+- [x] Add password field to signup form
+- [x] Add confirm password field
+- [x] Password strength indicator (✓ Strong / ⚠ Too short)
+- [x] Passwords match validation (✓ Match / ✗ Don't match)
+- [x] Store hashed password in database via API
+
+### Login Page
+- [x] Add toggle between OTP and Password login (🔐 OTP / 🔑 Password)
+- [x] Password input field with show/hide toggle
+- [x] "Forgot Password" link (customer only)
+- [x] Forgot password flow (email → OTP → reset)
+- [x] Reset password with OTP verification
+- [x] Support both customer (email) and employee (username) password login
+
+### Backend
+- [x] POST /auth/password/set - Set password for user
+- [x] POST /auth/password/login - Login with email + password
+- [x] POST /auth/password/forgot - Send OTP for password reset
+- [x] POST /auth/password/reset - Reset password with OTP
+- [x] Password hashing (bcrypt with salt)
+- [x] Add password_hash column to users table
+- [x] Database migration created (migrations/add_password_hash.sql)
+- [x] Email service: Password reset OTP template
+- [x] Deployed to Railway (commit: 9bd6874)
+
+### API Integration
+- [x] api.auth.setPassword() - Frontend API method
+- [x] api.auth.loginWithPassword() - Frontend API method
+- [x] api.auth.forgotPassword() - Frontend API method
+- [x] api.auth.resetPassword() - Frontend API method
+- [x] Email normalization (lowercase, trim) on all endpoints
+- [x] Device ID tracking for password logins
+
+### User Experience
+- [x] Signup: Password set automatically after account creation
+- [x] Login: Smart toggle appears only for email (not username)
+- [x] Forgot password: 10-minute OTP expiration
+- [x] Reset password: New password validation (min 8 chars)
+- [x] Success/error toasts for all password operations
+- [x] Automatic redirect after password reset (to login with password method)
+
+**STATUS:** 100% Complete. Users can now:
+1. Sign up with password (stored securely with bcrypt)
+2. Login with OTP OR password (their choice)
+3. Reset forgotten password via email OTP
+4. All password operations working on both frontend and backend

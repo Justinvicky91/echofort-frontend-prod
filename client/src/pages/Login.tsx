@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://api.echofort.ai';
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [step, setStep] = useState<"identifier" | "otp" | "password" | "mobile-otp" | "recovery">("identifier");
+  const [step, setStep] = useState<"identifier" | "otp" | "password" | "mobile-otp" | "recovery" | "forgot-password" | "reset-password">("identifier");
   const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
   const [mobileOtp, setMobileOtp] = useState("");
@@ -19,9 +19,12 @@ export default function Login() {
   const [tempToken, setTempToken] = useState("");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginType, setLoginType] = useState<"customer" | "employee" | null>(null);
+  const [loginMethod, setLoginMethod] = useState<"otp" | "password">("otp");
 
   // Detect if identifier is email or username
   const isEmail = (str: string) => {
@@ -36,11 +39,16 @@ export default function Login() {
 
     try {
       if (isEmailLogin) {
-        // Customer login - Email + OTP
+        // Customer login - Email + OTP or Password
         setLoginType('customer');
-        await api.initiateLogin(identifier);
-        toast.success("OTP sent to your email!");
-        setStep("otp");
+        if (loginMethod === 'otp') {
+          await api.initiateLogin(identifier);
+          toast.success("OTP sent to your email!");
+          setStep("otp");
+        } else {
+          // Password login
+          setStep("password");
+        }
       } else {
         // Employee/Admin login - Username + Password
         setLoginType('employee');
@@ -167,35 +175,48 @@ export default function Login() {
     }
   };
 
-  const handleEmployeeLogin = async (e: React.FormEvent) => {
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/auth/simple-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: identifier,
-          password
-        })
-      });
+      let data;
+      
+      if (loginType === 'customer') {
+        // Customer password login
+        data = await api.auth.loginWithPassword(identifier, password);
+      } else {
+        // Employee/Admin login
+        const response = await fetch(`${API_URL}/auth/simple-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: identifier,
+            password
+          })
+        });
+        data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.detail || data.message || 'Login failed');
+        }
+      }
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (data.ok || data.success) {
         localStorage.setItem("auth_token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data.user || { role: data.role, user_id: data.user_id, name: data.name }));
         
         toast.success("Login successful!");
         
         // Redirect based on role
-        if (data.user.is_super_admin || data.user.role === "super_admin") {
+        const role = data.user?.role || data.role;
+        if (role === "super_admin" || data.user?.is_super_admin) {
           setLocation("/super-admin");
-        } else if (data.user.role === "admin") {
+        } else if (role === "admin") {
           setLocation("/admin");
-        } else {
+        } else if (role === "employee") {
           setLocation("/employee");
+        } else {
+          setLocation("/dashboard");
         }
       } else {
         toast.error(data.detail || data.message || 'Login failed');
@@ -299,6 +320,33 @@ export default function Login() {
                 </p>
               </div>
 
+              {isEmail(identifier) && (
+                <div className="flex items-center justify-center gap-4 p-3 bg-muted/50 rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => setLoginMethod('otp')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      loginMethod === 'otp'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-transparent hover:bg-muted'
+                    }`}
+                  >
+                    🔐 Login with OTP
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLoginMethod('password')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      loginMethod === 'password'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-transparent hover:bg-muted'
+                    }`}
+                  >
+                    🔑 Login with Password
+                  </button>
+                </div>
+              )}
+
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
@@ -386,7 +434,7 @@ export default function Login() {
 
           {/* Step 3: Password (for employees/admin) */}
           {step === "password" && (
-            <form onSubmit={handleEmployeeLogin} className="space-y-6">
+            <form onSubmit={handlePasswordLogin} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Password
@@ -439,6 +487,17 @@ export default function Login() {
               >
                 ← Back
               </Button>
+
+              {loginType === 'customer' && (
+                <Button
+                  type="button"
+                  variant="link"
+                  className="w-full text-sm"
+                  onClick={() => setStep("forgot-password")}
+                >
+                  Forgot Password?
+                </Button>
+              )}
             </form>
           )}
 
@@ -587,6 +646,164 @@ export default function Login() {
                 }}
               >
                 Cancel Login
+              </Button>
+            </form>
+          )}
+
+          {/* Step 6: Forgot Password */}
+          {step === "forgot-password" && (
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              setLoading(true);
+              try {
+                await api.auth.forgotPassword(identifier);
+                toast.success("Password reset OTP sent to your email!");
+                setStep("reset-password");
+              } catch (error: any) {
+                toast.error(error.message || "Failed to send reset OTP");
+              } finally {
+                setLoading(false);
+              }
+            }} className="space-y-6">
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
+                <p className="text-blue-400 text-sm">
+                  We'll send a password reset OTP to <strong>{identifier}</strong>
+                </p>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                    Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    Send Reset OTP
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setStep("password");
+                }}
+              >
+                ← Back to Login
+              </Button>
+            </form>
+          )}
+
+          {/* Step 7: Reset Password */}
+          {step === "reset-password" && (
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (newPassword !== confirmNewPassword) {
+                toast.error("Passwords do not match");
+                return;
+              }
+              if (newPassword.length < 8) {
+                toast.error("Password must be at least 8 characters");
+                return;
+              }
+              setLoading(true);
+              try {
+                await api.auth.resetPassword(identifier, otp, newPassword);
+                toast.success("Password reset successful! Please login.");
+                setStep("identifier");
+                setOtp("");
+                setNewPassword("");
+                setConfirmNewPassword("");
+                setLoginMethod("password");
+              } catch (error: any) {
+                toast.error(error.message || "Failed to reset password");
+              } finally {
+                setLoading(false);
+              }
+            }} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Enter OTP
+                </label>
+                <Input
+                  type="text"
+                  placeholder="6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className="text-center text-2xl tracking-widest"
+                  maxLength={6}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  New Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Minimum 8 characters"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                {newPassword && (
+                  <p className={`text-xs mt-1 ${
+                    newPassword.length >= 8 ? 'text-green-600' : 'text-yellow-600'
+                  }`}>
+                    {newPassword.length >= 8 ? '✓ Strong password' : '⚠ Password too short'}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Confirm New Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Re-enter password"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  required
+                />
+                {confirmNewPassword && (
+                  <p className={`text-xs mt-1 ${
+                    newPassword === confirmNewPassword ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {newPassword === confirmNewPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
+                  </p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading || otp.length !== 6}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                    Resetting...
+                  </>
+                ) : (
+                  <>
+                    Reset Password
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setStep("forgot-password");
+                  setOtp("");
+                }}
+              >
+                ← Back
               </Button>
             </form>
           )}

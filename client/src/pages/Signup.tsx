@@ -22,6 +22,8 @@ export default function Signup() {
     phone: "",
     plan: "personal",
     promoCode: "",
+    password: "",
+    confirmPassword: "",
     address: "",
     city: "",
     state: "",
@@ -61,7 +63,7 @@ export default function Signup() {
   };
 
   const validateStep1 = () => {
-    if (!formData.fullName || !formData.email || !formData.phone) {
+    if (!formData.fullName || !formData.email || !formData.phone || !formData.password) {
       setError("Please fill in all required fields");
       return false;
     }
@@ -71,6 +73,14 @@ export default function Signup() {
     }
     if (!/^\d{10}$/.test(formData.phone)) {
       setError("Please enter a valid 10-digit phone number");
+      return false;
+    }
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
       return false;
     }
     return true;
@@ -149,6 +159,12 @@ export default function Signup() {
           proof: formData.idProof,
         },
         otp: formData.otp,
+      });
+      
+      // Set password for the new user
+      await api.auth.setPassword({
+        email: formData.email,
+        password: formData.password,
       });
       
       setSuccess("Account created successfully! Redirecting to payment...");
@@ -302,6 +318,40 @@ export default function Signup() {
                   <p className="text-xs text-muted-foreground mt-1">
                     Full number: {formData.countryCode} {formData.phone}
                   </p>
+                </div>
+                <div>
+                  <Label htmlFor="password">Password *</Label>
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    placeholder="Minimum 8 characters" 
+                    className="mt-2" 
+                    value={formData.password} 
+                    onChange={(e) => handleInputChange('password', e.target.value)} 
+                    required 
+                  />
+                  {formData.password && (
+                    <p className={`text-xs mt-1 ${formData.password.length >= 8 ? 'text-green-600' : 'text-yellow-600'}`}>
+                      {formData.password.length >= 8 ? '✓ Strong password' : '⚠ Password too short'}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                  <Input 
+                    id="confirmPassword" 
+                    type="password" 
+                    placeholder="Re-enter password" 
+                    className="mt-2" 
+                    value={formData.confirmPassword} 
+                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)} 
+                    required 
+                  />
+                  {formData.confirmPassword && (
+                    <p className={`text-xs mt-1 ${formData.password === formData.confirmPassword ? 'text-green-600' : 'text-red-600'}`}>
+                      {formData.password === formData.confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="plan">Choose Your Plan *</Label>
