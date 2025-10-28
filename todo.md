@@ -360,3 +360,19 @@
 - [ ] Track user signups and conversions
 - [ ] Monitor error logs
 - [ ] Collect user feedback
+
+
+## 🚨 CRITICAL BUGS - Login System (Oct 28, 2025)
+
+### Bug 1: Email OTP Login Failing
+- [ ] "Unauthorized" error when verifying OTP
+- [ ] device_id fix didn't resolve the issue
+- [ ] Need to debug backend OTP verification endpoint
+- [ ] Check if OTP is being validated correctly
+
+### Bug 2: WhatsApp 2FA Not Implemented
+- [ ] Super Admin should have WhatsApp OTP as 2FA after email login
+- [ ] Flow: Email OTP → Success → WhatsApp OTP → Dashboard
+- [ ] Need WhatsApp Business API integration
+- [ ] Need 2FA flow in frontend
+- [ ] Need backend endpoint for WhatsApp OTP send/verify
