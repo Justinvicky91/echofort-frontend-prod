@@ -142,17 +142,29 @@ function ConfigureGatewayModal({ gateway, existing, onClose, onSubmit }: any) {
     gateway_name: gateway.id,
     api_key: existing?.api_key || '',
     secret_key: existing?.secret_key || '',
-    webhook_url: existing?.webhook_url || '',
+    webhook_secret: existing?.webhook_secret || '',
     enabled: existing?.enabled || false,
     test_mode: existing?.test_mode || true,
     supported_currencies: existing?.supported_currencies || 'INR,USD',
+    supported_regions: existing?.supported_regions || gateway.region || 'Global',
+    priority: existing?.priority || 1,
   });
   const [showApiKey, setShowApiKey] = useState(false);
   const [showSecretKey, setShowSecretKey] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    // Convert comma-separated strings to arrays for backend
+    const payload = {
+      ...formData,
+      supported_currencies: typeof formData.supported_currencies === 'string' 
+        ? formData.supported_currencies.split(',').map(c => c.trim())
+        : formData.supported_currencies,
+      supported_regions: typeof formData.supported_regions === 'string'
+        ? formData.supported_regions.split(',').map(r => r.trim())
+        : formData.supported_regions,
+    };
+    onSubmit(payload);
   };
 
   return (
@@ -215,8 +227,8 @@ function ConfigureGatewayModal({ gateway, existing, onClose, onSubmit }: any) {
             <label className="block text-sm font-medium text-gray-300 mb-2">Webhook URL</label>
             <input
               type="url"
-              value={formData.webhook_url}
-              onChange={(e) => setFormData({ ...formData, webhook_url: e.target.value })}
+              value={formData.webhook_secret}
+              onChange={(e) => setFormData({ ...formData, webhook_secret: e.target.value })}
               className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
               placeholder="https://api.echofort.ai/webhooks/payment"
             />
