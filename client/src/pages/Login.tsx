@@ -175,7 +175,6 @@ export default function Login() {
     }
   };
 
-  // Handle password-based login for employees and customers
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -188,12 +187,18 @@ export default function Login() {
         data = await api.auth.loginWithPassword(identifier, password);
       } else {
         // Employee/Admin login
-        data = await api.verifyLogin({
-          identifier,
-          password,
-          device_id: 'web-browser',
-          device_name: navigator.userAgent
+        const response = await fetch(`${API_URL}/auth/simple-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: identifier,
+            password
+          })
         });
+        data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.detail || data.message || 'Login failed');
+        }
       }
 
       if (data.ok || data.success) {
