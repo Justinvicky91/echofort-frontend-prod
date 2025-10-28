@@ -32,6 +32,8 @@ import Signup from "./pages/Signup";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Refund from "./pages/Refund";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 
 function Router() {
   return (
@@ -54,6 +56,8 @@ function Router() {
       <Route path="/terms" component={Terms} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/refund" component={Refund} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/refund-policy" component={RefundPolicy} />
       
       {/* Dashboard routes (without /dashboard prefix) */}
       <Route path="/dashboard" component={UserDashboard} />

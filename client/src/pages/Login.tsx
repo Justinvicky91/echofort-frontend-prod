@@ -69,7 +69,7 @@ export default function Login() {
       const response = await api.verifyLogin({ identifier, otp, device_id: 'web-browser', device_name: navigator.userAgent });
       
       // Check if user is Super Admin - require mobile OTP
-      if (response.user.role === "super_admin") {
+      if (response?.user?.role === "super_admin") {
         setIsSuperAdmin(true);
         setTempToken(response.temp_token || response.token);
         

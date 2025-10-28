@@ -1,0 +1,8 @@
+{
+  "query": "SELECT username, role, is_super_admin, user_id FROM employees WHERE is_super_admin = true LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2y6sS8DpnU5zjJD.root --database 9Rouc7DxCXtQDEEF5GnzG8 --execute SELECT username, role, is_super_admin, user_id FROM employees WHERE is_super_admin = true LIMIT 1;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table '9rouc7dxcxtqdeef5gnzg8.employees' doesn't exist"
+  ]
+}

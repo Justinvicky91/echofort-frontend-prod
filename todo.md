@@ -435,3 +435,31 @@
 - [ ] Flow: Email → Email OTP → Verify → WhatsApp Password → Login
 - [ ] Remove mobile-otp step for super admin
 - [ ] Add password verification after email OTP for super admin
+
+
+## 🐛 CRITICAL LOGIN BUG (Oct 28, 2025) ✅ FIXED
+
+- [x] Fix "Cannot read properties of undefined (reading 'role')" error after OTP verification
+- [x] User object not being returned properly from backend (was returning user_type instead of role)
+- [x] Login flow breaking at OTP verification step
+- [x] Backend fix deployed to Railway (commit: de4c603)
+
+
+## 🐛 SUPER ADMIN LOGIN FLOW FIX (Oct 28, 2025) ✅ FIXED
+
+- [x] Allow super admin to login with EMAIL (not username)
+- [x] Flow: Email → Email OTP → WhatsApp OTP
+- [x] Check employees table where is_super_admin=true
+- [x] Match email from linked user_id in employees table
+- [x] Send WhatsApp OTP after email OTP verification
+- [x] Backend deployed (commit: 17730f9)
+
+
+## 📄 POLICY PAGES (Oct 28, 2025) ✅ COMPLETE
+
+- [x] Create Privacy Policy page (/privacy-policy)
+- [x] Create Terms & Conditions page (/terms) - Already existed
+- [x] Create Refund/Cancellation Policy page (/refund-policy)
+- [x] Create Contact Us page (/contact) - Already existed
+- [x] Add routes to App.tsx
+- [x] Required for Razorpay compliance
