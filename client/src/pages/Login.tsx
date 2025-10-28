@@ -175,6 +175,7 @@ export default function Login() {
     }
   };
 
+  // Handle password-based login for employees and customers
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
