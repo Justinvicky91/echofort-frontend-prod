@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, Phone, MapPin, Clock, AlertTriangle, CheckCircle, ArrowRight, Play, Sun, Moon, Monitor, Bell, TrendingUp, X } from "lucide-react";
+import { Shield, Phone, MapPin, Clock, AlertTriangle, CheckCircle, ArrowRight, Play, Sun, Moon, Monitor, Bell, TrendingUp, X, MessageSquare } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import api from "@/lib/api";
 
@@ -467,6 +467,13 @@ export default function Home() {
                 color: "text-blue-500",
               },
               {
+                icon: <MessageSquare className="w-12 h-12" />,
+                title: "WhatsApp/SMS/Telegram Protection",
+                description: "Scan messages BEFORE opening them. AI detects digital arrest scams, fake loan offers, phishing links, and fraud patterns instantly.",
+                color: "text-emerald-500",
+                badge: "MOST POPULAR",
+              },
+              {
                 icon: <Shield className="w-12 h-12" />,
                 title: "Scam Database",
                 description: "Access to 125,000+ known scam numbers and patterns reported across India, constantly updated.",
@@ -497,7 +504,12 @@ export default function Home() {
                 color: "text-teal-500",
               },
             ].map((feature, index) => (
-              <div key={index} className="dashboard-card stagger-item">
+              <div key={index} className="dashboard-card stagger-item relative">
+                {feature.badge && (
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    {feature.badge}
+                  </div>
+                )}
                 <div className={`${feature.color} mb-4`}>{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground">{feature.description}</p>
