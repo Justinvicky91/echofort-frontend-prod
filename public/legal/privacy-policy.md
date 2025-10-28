@@ -95,7 +95,7 @@ When You report a scam caller:
 - Data transmission uses TLS 1.3
 - Passwords are hashed using bcrypt
 - Evidence vault is encrypted and access-controlled
-- **Your data is protected with Singapore bank-level security standards**
+- **Your data is protected with bank-grade security standards**
 
 ### 4.2 Access Controls
 - Role-based access control (RBAC)
