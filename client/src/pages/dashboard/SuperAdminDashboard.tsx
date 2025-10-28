@@ -20,6 +20,9 @@ import ApprovalCenter from '../../components/admin/ApprovalCenter';
 import SystemConfiguration from '../../components/admin/SystemConfiguration';
 import WhatsAppConfig from '../../components/admin/WhatsAppConfig';
 import RecoveryCodes from '../../components/admin/RecoveryCodes';
+import ThreatIntel from '../../components/admin/ThreatIntel';
+import DeepAnalytics from '../../components/admin/DeepAnalytics';
+import DataCore from '../../components/admin/DataCore';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -256,6 +259,9 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'vault' && <CallRecordingVault />}
                 {activeSection === 'exemptions' && <CustomerExemptions />}
                 {activeSection === 'echofort-ai' && <EchoFortAI />}
+                {activeSection === 'threats' && <ThreatIntel />}
+                {activeSection === 'analytics' && <DeepAnalytics />}
+                {activeSection === 'database' && <DataCore />}
                 {activeSection === 'system-config' && <SystemConfiguration />}
                 {activeSection === 'whatsapp-config' && <WhatsAppConfig />}
                 {activeSection === 'recovery-codes' && <RecoveryCodes />}
