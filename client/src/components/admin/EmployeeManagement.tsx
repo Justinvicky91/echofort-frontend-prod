@@ -20,6 +20,8 @@ export default function EmployeeManagement() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [resetPasswordId, setResetPasswordId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchEmployees();
@@ -49,12 +51,18 @@ export default function EmployeeManagement() {
   };
 
   const handleResetPassword = async (id: any) => {
-    const newPassword = prompt('Enter new password:');
-    if (!newPassword) return;
+    setResetPasswordId(id);
+    setShowResetPasswordModal(true);
+  };
+
+  const submitPasswordReset = async (newPassword: string) => {
+    if (!resetPasswordId) return;
 
     try {
-      await api.resetEmployeePassword(id, newPassword);
+      await api.resetEmployeePassword(resetPasswordId, newPassword);
       alert('Password reset successfully');
+      setShowResetPasswordModal(false);
+      setResetPasswordId(null);
     } catch (error: any) {
       alert(error.message);
     }
@@ -212,6 +220,17 @@ export default function EmployeeManagement() {
           onSubmit={handleAddEmployee}
         />
       )}
+
+      {/* Reset Password Modal */}
+      {showResetPasswordModal && (
+        <ResetPasswordModal
+          onClose={() => {
+            setShowResetPasswordModal(false);
+            setResetPasswordId(null);
+          }}
+          onSubmit={submitPasswordReset}
+        />
+      )}
     </div>
   );
 }
@@ -321,3 +340,81 @@ function AddEmployeeModal({ onClose, onSubmit }: any) {
   );
 }
 
+
+function ResetPasswordModal({ onClose, onSubmit }: any) {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    onSubmit(newPassword);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
+        <h3 className="text-xl font-bold mb-4">Reset Employee Password</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                setError('');
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter new password (min 8 characters)"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setError('');
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Confirm new password"
+              required
+            />
+          </div>
+          {error && (
+            <div className="text-red-600 text-sm">{error}</div>
+          )}
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Reset Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
