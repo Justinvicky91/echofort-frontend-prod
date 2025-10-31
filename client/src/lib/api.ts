@@ -272,9 +272,20 @@ class ApiService {
   }
 
   async chatWithEchoFortAI(message: string) {
-    return this.request('/api/echofort-ai-intelligent/chat', {
+    // Use the new autonomous AI endpoint with real database access
+    return this.request('/api/echofort-ai-autonomous/chat', {
       method: 'POST',
       body: JSON.stringify({ message, execute_directly: true })
+    });
+  }
+
+  async getAIPendingApprovals() {
+    return this.request('/api/echofort-ai-autonomous/learning/pending');
+  }
+
+  async approveAILearning(entryId: number) {
+    return this.request(`/api/echofort-ai-autonomous/learning/approve/${entryId}`, {
+      method: 'POST'
     });
   }
 
