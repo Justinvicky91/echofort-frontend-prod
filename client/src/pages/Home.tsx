@@ -156,16 +156,20 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
               <div className="relative">
-                <img src="/logo/echofort-logo-192.png" alt="EchoFort" className="w-16 h-16" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                <img 
+                  src="/logo/echofort-logo-192.png" 
+                  alt="EchoFort - AI-Powered Scam Protection" 
+                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-contain" 
+                />
+                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse" />
               </div>
               <div>
-                <span className="text-2xl font-bold gradient-text block">EchoFort</span>
-                <span className="text-xs text-muted-foreground">AI-Powered Protection</span>
+                <span className="text-xl sm:text-2xl font-bold gradient-text block">EchoFort</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">AI-Powered Protection</span>
               </div>
-            </div>
+            </Link>
             <div className="hidden md:flex items-center gap-6">
               <Link href="/features" className="text-foreground/80 hover:text-foreground transition-colors font-semibold">
                 Features
@@ -552,7 +556,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/logo/echofort-logo-64.png" alt="EchoFort" className="w-6 h-6" />
+                <img src="/logo/echofort-logo-64.png" alt="EchoFort - AI Scam Protection" className="w-8 h-8 object-contain" />
                 <div>
                   <span className="text-xl font-bold block">EchoFort</span>
                   <span className="text-xs text-muted-foreground">AI-Powered Protection</span>
