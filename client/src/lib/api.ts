@@ -272,8 +272,8 @@ class ApiService {
   }
 
   async chatWithEchoFortAI(message: string) {
-    // Use the new autonomous AI endpoint with real database access
-    return this.request('/api/echofort-ai-autonomous/chat', {
+    // Use the execution engine endpoint for autonomous fix proposals
+    return this.request('/api/echofort-ai-execution/chat', {
       method: 'POST',
       body: JSON.stringify({ message, execute_directly: true })
     });
