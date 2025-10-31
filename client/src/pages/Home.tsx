@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { fadeInUp, cardHover, buttonHover, staggerContainer } from "@/lib/animations";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Shield, Phone, MapPin, Clock, AlertTriangle, CheckCircle, ArrowRight, Play, Sun, Moon, Monitor, Bell, TrendingUp, X, MessageSquare } from "lucide-react";
