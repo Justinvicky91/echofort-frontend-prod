@@ -23,6 +23,7 @@ import RecoveryCodes from '../../components/admin/RecoveryCodes';
 import ThreatIntel from '../../components/admin/ThreatIntel';
 import DeepAnalytics from '../../components/admin/DeepAnalytics';
 import DataCore from '../../components/admin/DataCore';
+import AILearningCenter from '../../components/admin/AILearningCenter';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -77,6 +78,7 @@ export default function SuperAdminDashboard() {
     { id: 'system-config', label: 'System Config', icon: Settings, color: 'from-orange-500 to-red-500' },
     { id: 'whatsapp-config', label: 'WhatsApp Support', icon: MessageCircle, color: 'from-green-500 to-emerald-500' },
     { id: 'recovery-codes', label: 'Recovery Codes', icon: Lock, color: 'from-yellow-500 to-orange-500' },
+    { id: 'ai-learning-center', label: 'AI Learning Center', icon: BrainCircuit, color: 'from-indigo-500 to-purple-500' },
   ];
 
   return (
@@ -265,6 +267,7 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'system-config' && <SystemConfiguration />}
                 {activeSection === 'whatsapp-config' && <WhatsAppConfig />}
                 {activeSection === 'recovery-codes' && <RecoveryCodes />}
+                {activeSection === 'ai-learning-center' && <AILearningCenter />}
               </motion.div>
             </AnimatePresence>
           </div>
