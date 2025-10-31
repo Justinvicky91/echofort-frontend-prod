@@ -4,7 +4,7 @@ import {
   Users, DollarSign, Shield, TrendingUp, AlertTriangle, 
   CreditCard, Settings, LogOut, Menu, X, Bot, Lock,
   Gift, Database, BarChart3, Mail, HeadphonesIcon, Zap,
-  Activity, Globe, Cpu, Eye, Server, PieChart, Bell, MessageCircle
+  Activity, Globe, Cpu, Eye, Server, PieChart, Bell, MessageCircle, BrainCircuit
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import api from '../../lib/api';
