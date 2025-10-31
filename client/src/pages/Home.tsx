@@ -156,7 +156,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <img src="/logo.png" alt="EchoFort" className="w-16 h-16" />
+                <img src="/logo/echofort-logo-192.png" alt="EchoFort" className="w-16 h-16" />
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
               </div>
               <div>
@@ -550,7 +550,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/logo.png" alt="EchoFort" className="w-6 h-6" />
+                <img src="/logo/echofort-logo-64.png" alt="EchoFort" className="w-6 h-6" />
                 <div>
                   <span className="text-xl font-bold block">EchoFort</span>
                   <span className="text-xs text-muted-foreground">AI-Powered Protection</span>
