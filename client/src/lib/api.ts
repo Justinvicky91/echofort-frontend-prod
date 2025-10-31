@@ -632,6 +632,23 @@ class ApiService {
       method: 'POST'
     });
   }
+
+  // AI Execution Engine
+  async getPendingActions() {
+    return this.get('/ai-execution/pending-actions');
+  }
+
+  async approveAction(actionId: number, approved: boolean, notes?: string) {
+    return this.post('/ai-execution/approve-action', {
+      action_id: actionId,
+      approved,
+      notes
+    });
+  }
+
+  async getActionHistory(limit: number = 50) {
+    return this.get(`/ai-execution/action-history?limit=${limit}`);
+  }
 }
 
 export const api = new ApiService();
