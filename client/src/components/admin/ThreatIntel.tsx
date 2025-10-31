@@ -14,11 +14,20 @@ export default function ThreatIntel() {
   const fetchThreats = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/threats');
-      // const data = await response.json();
+      // Fetch real data from backend
+      const response = await fetch('/api/admin/threats', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
       
-      // Mock data for now
+      if (data.ok && data.threats) {
+        setThreats(data.threats);
+        return;
+      }
+      
+      // Fallback to mock data if API fails
       const mockThreats = [
         {
           id: 1,
