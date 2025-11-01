@@ -29,12 +29,12 @@ export default function AIPendingActions() {
   const pendingActions = data?.actions || [];
   console.log('[DEBUG] pendingActions:', pendingActions);
   
-  // DEBUG: Alert to see actual data
-  if (data) {
-    alert(`DEBUG: data = ${JSON.stringify(data).substring(0, 200)}`);
-  } else {
-    alert('DEBUG: data is undefined/null!');
-  }
+  // DEBUG: Alert to see actual data - using useEffect to avoid infinite loop
+  useEffect(() => {
+    if (data !== undefined) {
+      alert(`DEBUG: data = ${JSON.stringify(data).substring(0, 200)}`);
+    }
+  }, [data]);
 
   const handleApprove = async (actionId) => {
     if (!confirm('Are you sure you want to approve and execute this action?')) {
