@@ -39,7 +39,7 @@ const AIPendingActions: React.FC = () => {
 
   const fetchPendingActions = async () => {
     try {
-      const response = await api.get('/api/ai-execution/pending-actions');
+      const response = await api.get('/api/proxy/ai-pending-actions');
       setPendingActions(response.data.actions || []);
     } catch (error) {
       console.error('Error fetching pending actions:', error);
