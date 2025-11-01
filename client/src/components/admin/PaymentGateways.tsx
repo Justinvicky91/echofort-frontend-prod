@@ -45,12 +45,12 @@ export default function PaymentGateways() {
     }
   };
 
-  const handleTest = async (id: number) => {
+  const handleTest = async (gateway_name: string) => {
     try {
-      const result = await api.testPaymentGateway(id);
+      const result = await api.testPaymentGateway(gateway_name);
       alert(result.success ? 'Connection successful!' : 'Connection failed');
     } catch (error: any) {
-      alert(error.message);
+      alert('Connection failed: ' + error.message);
     }
   };
 
@@ -107,7 +107,7 @@ export default function PaymentGateways() {
                     </span>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); handleTest(configured.id); }}
+                    onClick={(e) => { e.stopPropagation(); handleTest(configured.gateway_name); }}
                     className="w-full mt-3 px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm font-medium"
                   >
                     Test Connection

@@ -189,9 +189,9 @@ class ApiService {
     });
   }
 
-  async testPaymentGateway(id: number) {
-    return this.request(`/admin/payment-gateways/${id}/test`, {
-      method: 'POST'
+  async testPaymentGateway(gateway_name: string) {
+    return this.request(`/api/admin/payment-gateways/test-connection/${gateway_name}`, {
+      method: 'GET'
     });
   }
 
