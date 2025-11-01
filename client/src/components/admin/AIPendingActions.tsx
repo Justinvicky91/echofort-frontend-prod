@@ -120,7 +120,10 @@ export default function AIPendingActions() {
         <h2 className="text-white font-bold mb-2">🔍 DEBUG INFO (VISIBLE)</h2>
         <pre className="text-white text-xs overflow-auto">
           {JSON.stringify({ 
-            hasData: !!data, 
+            hasData: !!data,
+            hasError: !!error,
+            errorMessage: error ? error.message : null,
+            isLoading: isLoading,
             dataKeys: data ? Object.keys(data) : [], 
             actionsLength: pendingActions.length,
             firstAction: pendingActions[0],
