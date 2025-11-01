@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-// Force rebuild: 2025-11-01 05:24 GMT+5:30 - Railway cache bust
 import { CheckCircle, AlertTriangle, Clock, Shield, Database, Code, XCircle } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
@@ -21,30 +20,15 @@ export default function AIPendingActions() {
   // Use tRPC queries and mutations
   const { data, isLoading, error, refetch } = trpc.aiProxy.getPendingActions.useQuery();
   
-  // DEBUG: Check for errors
-  if (error) {
-    console.error('[ERROR] tRPC query failed:', error);
-    alert(`ERROR: tRPC query failed: ${error.message}`);
-  }
+
   const approveMutation = trpc.aiProxy.approveAction.useMutation();
 
-  console.log('[DEBUG] tRPC data:', data);
-  console.log('[DEBUG] isLoading:', isLoading);
-  console.log('[DEBUG] data?.actions:', data?.actions);
-  
+
   // Handle multiple possible data structures
   const pendingActions = data?.actions || data?.result?.data?.json?.actions || data?.result?.data?.actions || [];
   
-  console.log('[DEBUG] Raw data:', data);
-  console.log('[DEBUG] Extracted pendingActions:', pendingActions);
-  console.log('[DEBUG] pendingActions:', pendingActions);
-  
-  // DEBUG: Alert to see actual data - using useEffect to avoid infinite loop
-  useEffect(() => {
-    if (data !== undefined) {
-      alert(`DEBUG: data = ${JSON.stringify(data).substring(0, 200)}`);
-    }
-  }, [data]);
+
+
 
   const handleApprove = async (actionId) => {
     if (!confirm('Are you sure you want to approve and execute this action?')) {
@@ -64,7 +48,7 @@ export default function AIPendingActions() {
         alert(`⚠️ ${result.message}`);
       }
     } catch (error: any) {
-      console.error('Error approving action:', error);
+      console.error('Error approving action:', error); // Keep error logging
       alert(`❌ Error: ${error.message}`);
     }
   };
@@ -83,7 +67,7 @@ export default function AIPendingActions() {
       alert('✅ Action rejected successfully');
       refetch();
     } catch (error: any) {
-      console.error('Error rejecting action:', error);
+      console.error('Error rejecting action:', error); // Keep error logging
       alert(`❌ Error: ${error.message}`);
     }
   };
@@ -115,23 +99,7 @@ export default function AIPendingActions() {
 
   return (
     <div className="space-y-6">
-      {/* DEBUG INFO - VISIBLE ON PAGE */}
-      <div className="bg-red-900/50 rounded-xl p-4 border-2 border-red-500">
-        <h2 className="text-white font-bold mb-2">🔍 DEBUG INFO (VISIBLE)</h2>
-        <pre className="text-white text-xs overflow-auto">
-          {JSON.stringify({ 
-            hasData: !!data,
-            hasError: !!error,
-            errorMessage: error ? error.message : null,
-            isLoading: isLoading,
-            dataKeys: data ? Object.keys(data) : [], 
-            actionsLength: pendingActions.length,
-            firstAction: pendingActions[0],
-            rawData: data 
-          }, null, 2)}
-        </pre>
-      </div>
-      
+
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl p-6 border border-blue-500/30">
         <div className="flex items-center gap-3 mb-2">
