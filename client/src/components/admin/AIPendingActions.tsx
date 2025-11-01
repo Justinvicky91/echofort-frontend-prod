@@ -27,6 +27,13 @@ export default function AIPendingActions() {
   
   const pendingActions = data?.actions || [];
   console.log('[DEBUG] pendingActions:', pendingActions);
+  
+  // DEBUG: Alert to see actual data
+  if (data) {
+    alert(`DEBUG: data = ${JSON.stringify(data).substring(0, 200)}`);
+  } else {
+    alert('DEBUG: data is undefined/null!');
+  }
 
   const handleApprove = async (actionId) => {
     if (!confirm('Are you sure you want to approve and execute this action?')) {
