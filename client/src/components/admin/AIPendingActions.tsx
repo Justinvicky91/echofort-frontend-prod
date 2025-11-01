@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+// Force rebuild: 2025-11-01 05:24 GMT+5:30 - Railway cache bust
 import { CheckCircle, AlertTriangle, Clock, Shield, Database, Code, XCircle } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
