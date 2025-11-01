@@ -39,7 +39,7 @@ const AIPendingActions: React.FC = () => {
 
   const fetchPendingActions = async () => {
     try {
-      const response = await api.get('/ai-execution/pending-actions');
+      const response = await api.get('/api/ai-execution/pending-actions');
       setPendingActions(response.data.actions || []);
     } catch (error) {
       console.error('Error fetching pending actions:', error);
@@ -55,7 +55,7 @@ const AIPendingActions: React.FC = () => {
 
     setProcessing(actionId);
     try {
-      const response = await api.post('/ai-execution/approve-action', {
+      const response = await api.post('/api/ai-execution/approve-action', {
         action_id: actionId,
         approved: true
       });
@@ -80,7 +80,7 @@ const AIPendingActions: React.FC = () => {
 
     setProcessing(actionId);
     try {
-      await api.post('/ai-execution/approve-action', {
+      await api.post('/api/ai-execution/approve-action', {
         action_id: actionId,
         approved: false
       });
