@@ -25,6 +25,11 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
   },
+  esbuild: {
+    loader: 'tsx',
+    include: /\.tsx?$/,
+    exclude: [],
+  },
   server: {
     host: true,
     allowedHosts: [
