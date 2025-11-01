@@ -4,7 +4,7 @@ import {
   Users, DollarSign, Shield, TrendingUp, AlertTriangle, 
   CreditCard, Settings, LogOut, Menu, X, Bot, Lock,
   Gift, Database, BarChart3, Mail, HeadphonesIcon, Zap,
-  Activity, Globe, Cpu, Eye
+  Activity, Globe, Cpu, Eye, MessageCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
@@ -13,6 +13,7 @@ import PaymentGateways from '../../components/admin/PaymentGateways';
 import CallRecordingVault from '../../components/admin/CallRecordingVault';
 import CustomerExemptions from '../../components/admin/CustomerExemptions';
 import EchoFortAI from '../../components/admin/EchoFortAI';
+import WhatsAppSettings from '../../components/admin/WhatsAppSettings';
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
@@ -61,6 +62,7 @@ export default function SuperAdminDashboard() {
     { id: 'echofort-ai', label: 'EchoFort AI', icon: Bot, color: 'from-violet-500 to-purple-500' },
     { id: 'analytics', label: 'Deep Analytics', icon: BarChart3, color: 'from-blue-600 to-indigo-600' },
     { id: 'database', label: 'Data Core', icon: Database, color: 'from-gray-600 to-gray-800' },
+    { id: 'whatsapp', label: 'WhatsApp Chat', icon: MessageCircle, color: 'from-green-500 to-emerald-600' },
   ];
 
   return (
@@ -239,6 +241,7 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'vault' && <CallRecordingVault />}
                 {activeSection === 'exemptions' && <CustomerExemptions />}
                 {activeSection === 'echofort-ai' && <EchoFortAI />}
+                {activeSection === 'whatsapp' && <WhatsAppSettings />}
               </motion.div>
             </AnimatePresence>
           </div>
