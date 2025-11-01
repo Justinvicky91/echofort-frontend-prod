@@ -115,6 +115,20 @@ export default function AIPendingActions() {
 
   return (
     <div className="space-y-6">
+      {/* DEBUG INFO - VISIBLE ON PAGE */}
+      <div className="bg-red-900/50 rounded-xl p-4 border-2 border-red-500">
+        <h2 className="text-white font-bold mb-2">🔍 DEBUG INFO (VISIBLE)</h2>
+        <pre className="text-white text-xs overflow-auto">
+          {JSON.stringify({ 
+            hasData: !!data, 
+            dataKeys: data ? Object.keys(data) : [], 
+            actionsLength: pendingActions.length,
+            firstAction: pendingActions[0],
+            rawData: data 
+          }, null, 2)}
+        </pre>
+      </div>
+      
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl p-6 border border-blue-500/30">
         <div className="flex items-center gap-3 mb-2">
