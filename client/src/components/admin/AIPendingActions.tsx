@@ -19,14 +19,24 @@ export default function AIPendingActions() {
   const [expandedAction, setExpandedAction] = useState<number | null>(null);
   
   // Use tRPC queries and mutations
-  const { data, isLoading, refetch } = trpc.aiProxy.getPendingActions.useQuery();
+  const { data, isLoading, error, refetch } = trpc.aiProxy.getPendingActions.useQuery();
+  
+  // DEBUG: Check for errors
+  if (error) {
+    console.error('[ERROR] tRPC query failed:', error);
+    alert(`ERROR: tRPC query failed: ${error.message}`);
+  }
   const approveMutation = trpc.aiProxy.approveAction.useMutation();
 
   console.log('[DEBUG] tRPC data:', data);
   console.log('[DEBUG] isLoading:', isLoading);
   console.log('[DEBUG] data?.actions:', data?.actions);
   
-  const pendingActions = data?.actions || [];
+  // Handle multiple possible data structures
+  const pendingActions = data?.actions || data?.result?.data?.json?.actions || data?.result?.data?.actions || [];
+  
+  console.log('[DEBUG] Raw data:', data);
+  console.log('[DEBUG] Extracted pendingActions:', pendingActions);
   console.log('[DEBUG] pendingActions:', pendingActions);
   
   // DEBUG: Alert to see actual data - using useEffect to avoid infinite loop
