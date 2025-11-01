@@ -23,7 +23,7 @@ export default function AIPendingActions() {
 
   const pendingActions = data?.actions || [];
 
-  const handleApprove = async (actionId: number) => {
+  const handleApprove = async (actionId) => {
     if (!confirm('Are you sure you want to approve and execute this action?')) {
       return;
     }
@@ -46,7 +46,7 @@ export default function AIPendingActions() {
     }
   };
 
-  const handleReject = async (actionId: number) {
+  const handleReject = async (actionId) => {
     if (!confirm('Are you sure you want to reject this action?')) {
       return;
     }
@@ -65,7 +65,7 @@ export default function AIPendingActions() {
     }
   };
 
-  const getRiskColor = (risk: string) => {
+  const getRiskColor = (risk) => {
     switch (risk.toLowerCase()) {
       case 'low': return 'text-green-400 bg-green-400/10 border-green-400/20';
       case 'medium': return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20';
@@ -74,7 +74,7 @@ export default function AIPendingActions() {
     }
   };
 
-  const getActionIcon = (type: string) => {
+  const getActionIcon = (type) => {
     switch (type.toLowerCase()) {
       case 'sql_execution': return <Database className="w-5 h-5" />;
       case 'code_change': return <Code className="w-5 h-5" />;
