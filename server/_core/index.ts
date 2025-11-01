@@ -41,6 +41,17 @@ async function startServer() {
   // Webhook routes
   app.use("/webhooks", webhookRoutes);
   // tRPC API
+  // DEBUG: Log all requests to /api/trpc
+  app.use("/api/trpc", (req, res, next) => {
+    console.log('[tRPC Request]', {
+      method: req.method,
+      url: req.url,
+      path: req.path,
+      query: req.query,
+      headers: req.headers,
+    });
+    next();
+  });
   app.use(
     "/api/trpc",
     createExpressMiddleware({
