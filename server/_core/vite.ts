@@ -63,7 +63,16 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Serve static files with caching for assets, but no-cache for HTML
+  app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+    }
+  }));
 
   // fall through to index.html if the file doesn't exist
   // BUT exclude API routes (they should have already been handled)
@@ -72,6 +81,9 @@ export function serveStatic(app: Express) {
     if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/webhooks/')) {
       return next(); // Let it 404 if API route not found
     }
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
