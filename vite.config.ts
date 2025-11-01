@@ -7,7 +7,18 @@ import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime()];
+const plugins = [
+  react({
+    babel: {
+      parserOpts: {
+        plugins: ['decorators-legacy', 'classProperties']
+      }
+    }
+  }), 
+  tailwindcss(), 
+  jsxLocPlugin(), 
+  vitePluginManusRuntime()
+];
 
 export default defineConfig({
   plugins,
@@ -24,11 +35,13 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    target: 'esnext',
+    minify: 'esbuild',
   },
-  esbuild: {
-    loader: 'tsx',
-    include: /\.tsx?$/,
-    exclude: [],
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext',
+    }
   },
   server: {
     host: true,
