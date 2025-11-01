@@ -33,6 +33,10 @@ class ApiService {
       const data = await response.json();
       
       if (!response.ok) {
+        // Don't silently fail for AI execution endpoints
+        if (endpoint.includes('/ai-execution/')) {
+          throw new Error(data.message || data.detail || 'Request failed');
+        }
         // Silently fail for expected missing endpoints (404, 500)
         if (response.status === 404 || response.status === 500) {
           console.warn(`API endpoint not available: ${endpoint}`);
