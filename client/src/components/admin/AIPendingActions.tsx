@@ -34,17 +34,39 @@ const AIPendingActions: React.FC = () => {
   const [processing, setProcessing] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchPendingActions();
-  }, []);
+    // Listen for postMessage from iframe
+    const handleMessage = (event: MessageEvent) => {      if (event.data.type === 'AI_PENDING_ACTIONS_DATA') {
+        console.log('[AI Pending Actions] Received data from SSR:', event.data.data);
+        setPendingActions(event.data.data);
+        setLoading(false);
+      } else if (event.data.type === 'AI_PENDING_ACTIONS_ERROR') {
+        console.error('[AI Pending Actions] Error from SSR:', event.data.error);
+        setLoading(false);
+      }
+    };
 
-  const fetchPendingActions = async () => {
-    try {
-      const response = await api.get('/api/proxy/ai-pending-actions');
-      setPendingActions(response.data.actions || []);
-    } catch (error) {
-      console.error('Error fetching pending actions:', error);
-    } finally {
-      setLoading(false);
+    window.addEventListener('message', handleMessage);
+
+    // Timeout after 10 seconds
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.warn('[AI Pending Actions] Timeout waiting for SSR data');
+        setLoading(false);
+      }
+    }, 10000);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearTimeout(timeout);
+    };
+  }, [loading]);
+
+  const refreshActions = () => {
+    // Reload the iframe to refresh data
+    const iframe = document.getElementById('ssr-iframe') as HTMLIFrameElement;
+    if (iframe) {
+      setLoading(true);
+      iframe.src = iframe.src;
     }
   };
 
@@ -62,7 +84,7 @@ const AIPendingActions: React.FC = () => {
 
       if (response.data.status === 'success' || response.data.status === 'executed') {
         alert('✅ Action executed successfully!');
-        fetchPendingActions(); // Refresh list
+        refreshActions(); // Refresh list
       } else {
         alert(`⚠️ ${response.data.message}`);
       }
@@ -86,7 +108,7 @@ const AIPendingActions: React.FC = () => {
       });
 
       alert('Action rejected');
-      fetchPendingActions(); // Refresh list
+      refreshActions(); // Refresh list
     } catch (error: any) {
       alert(`❌ Error: ${error.response?.data?.detail || error.message}`);
     } finally {
@@ -123,6 +145,13 @@ const AIPendingActions: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Hidden iframe to load SSR data */}
+      <iframe
+        id="ssr-iframe"
+        src="https://api.echofort.ai/admin/ai-pending-actions-data"
+        style={{ display: 'none' }}
+        title="AI Pending Actions Data Loader"
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
