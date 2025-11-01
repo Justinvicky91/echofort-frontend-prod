@@ -25,6 +25,7 @@ import DeepAnalytics from '../../components/admin/DeepAnalytics';
 import DataCore from '../../components/admin/DataCore';
 import AILearningCenter from '../../components/admin/AILearningCenter';
 import AIPendingActions from '../../components/admin/AIPendingActions';
+import FeaturesUsageDashboard from '../../components/admin/FeaturesUsageDashboard';
 
 export default function SuperAdminDashboard() {
   const [, setLocation] = useLocation();
@@ -68,6 +69,7 @@ export default function SuperAdminDashboard() {
     { id: 'employees', label: 'Team Matrix', icon: Users, color: 'from-purple-500 to-pink-500' },
     { id: 'customers', label: 'Customer Hub', icon: Globe, color: 'from-green-500 to-emerald-500' },
     { id: 'financial', label: 'Financial Center', icon: PieChart, color: 'from-emerald-500 to-teal-500' },
+    { id: 'features-usage', label: 'Features & Usage', icon: Activity, color: 'from-indigo-500 to-blue-500' },
     { id: 'infrastructure', label: 'Infrastructure', icon: Server, color: 'from-cyan-500 to-blue-500' },
     { id: 'payments', label: 'Payment Core', icon: CreditCard, color: 'from-yellow-500 to-orange-500' },
     { id: 'exemptions', label: 'VIP Access', icon: Gift, color: 'from-pink-500 to-rose-500' },
@@ -271,6 +273,7 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'recovery-codes' && <RecoveryCodes />}
                 {activeSection === 'ai-learning-center' && <AILearningCenter />}
                 {activeSection === 'ai-pending-actions' && <AIPendingActions />}
+                {activeSection === 'features-usage' && <FeaturesUsageDashboard />}
               </motion.div>
             </AnimatePresence>
           </div>
