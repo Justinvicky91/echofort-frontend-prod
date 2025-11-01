@@ -172,7 +172,7 @@ class ApiService {
 
   // Payment Gateways
   async getPaymentGateways() {
-    return this.request('/api/admin/payment-gateways/active');
+    return this.request('/api/admin/payment-gateways/list');
   }
 
   async configurePaymentGateway(data: any) {
