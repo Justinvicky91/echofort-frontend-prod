@@ -13,17 +13,24 @@ export const appRouter = router({
   system: systemRouter,
 
   // AI Pending Actions Proxy
-  aiProxy: router({    getPendingActions: publicProcedure.query(async () => {
+  aiProxy: router({    getPendingActions: publicProcedure.query(async (opts) => {
+      // DEBUG: Return request info
+      const debugInfo = {
+        requestReceived: true,
+        timestamp: new Date().toISOString(),
+        contextExists: !!opts.ctx,
+      };
       try {
         const response = await fetch('https://api.echofort.ai/api/ai-execution/pending-actions', {
           method: 'GET',
           headers: { 'Accept': 'application/json' },
         });
         if (!response.ok) throw new Error(`Backend returned ${response.status}`);
-        return await response.json();
+        const data = await response.json();
+        return { ...data, _debug: debugInfo };
       } catch (error: any) {
         console.error('[Proxy] Error fetching AI pending actions:', error);
-        return { actions: [], count: 0, error: error.message };
+        return { actions: [], count: 0, error: error.message, _debug: debugInfo };
       }
     }),
     approveAction: publicProcedure
