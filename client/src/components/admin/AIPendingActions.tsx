@@ -21,7 +21,12 @@ export default function AIPendingActions() {
   const { data, isLoading, refetch } = trpc.aiProxy.getPendingActions.useQuery();
   const approveMutation = trpc.aiProxy.approveAction.useMutation();
 
+  console.log('[DEBUG] tRPC data:', data);
+  console.log('[DEBUG] isLoading:', isLoading);
+  console.log('[DEBUG] data?.actions:', data?.actions);
+  
   const pendingActions = data?.actions || [];
+  console.log('[DEBUG] pendingActions:', pendingActions);
 
   const handleApprove = async (actionId) => {
     if (!confirm('Are you sure you want to approve and execute this action?')) {
