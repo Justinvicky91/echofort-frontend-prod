@@ -38,6 +38,7 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
+// Force rebuild: 2025-11-01 06:10 AM
 const trpcClient = trpc.createClient({
   links: [
     splitLink({
