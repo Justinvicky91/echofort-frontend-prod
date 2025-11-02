@@ -14,6 +14,9 @@ import CallRecordingVault from '../../components/admin/CallRecordingVault';
 import CustomerExemptions from '../../components/admin/CustomerExemptions';
 import EchoFortAI from '../../components/admin/EchoFortAI';
 import WhatsAppSettings from '../../components/admin/WhatsAppSettings';
+import VaultManagement from '../../components/admin/VaultManagement';
+import UserActivityTracking from '../../components/admin/UserActivityTracking';
+import DevicePermissions from '../../components/admin/DevicePermissions';
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
@@ -63,6 +66,9 @@ export default function SuperAdminDashboard() {
     { id: 'analytics', label: 'Deep Analytics', icon: BarChart3, color: 'from-blue-600 to-indigo-600' },
     { id: 'database', label: 'Data Core', icon: Database, color: 'from-gray-600 to-gray-800' },
     { id: 'whatsapp', label: 'WhatsApp Chat', icon: MessageCircle, color: 'from-green-500 to-emerald-600' },
+    { id: 'vault-mgmt', label: 'Vault Management', icon: Lock, color: 'from-indigo-500 to-purple-600' },
+    { id: 'user-activity', label: 'User Activity', icon: Activity, color: 'from-cyan-500 to-blue-600' },
+    { id: 'permissions', label: 'Device Permissions', icon: Shield, color: 'from-orange-500 to-red-600' },
   ];
 
   return (
@@ -242,6 +248,9 @@ export default function SuperAdminDashboard() {
                 {activeSection === 'exemptions' && <CustomerExemptions />}
                 {activeSection === 'echofort-ai' && <EchoFortAI />}
                 {activeSection === 'whatsapp' && <WhatsAppSettings />}
+                {activeSection === 'vault-mgmt' && <VaultManagement />}
+                {activeSection === 'user-activity' && <UserActivityTracking />}
+                {activeSection === 'permissions' && <DevicePermissions />}
               </motion.div>
             </AnimatePresence>
           </div>
