@@ -17,6 +17,7 @@ import WhatsAppSettings from '../../components/admin/WhatsAppSettings';
 import VaultManagement from '../../components/admin/VaultManagement';
 import UserActivityTracking from '../../components/admin/UserActivityTracking';
 import DevicePermissions from '../../components/admin/DevicePermissions';
+import PlatformStatus from '../../components/admin/PlatformStatus';
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ export default function SuperAdminDashboard() {
 
   const menuItems = [
     { id: 'overview', label: 'Command Center', icon: Activity, color: 'from-blue-500 to-cyan-500' },
+    { id: 'platform-status', label: 'Platform Status', icon: Zap, color: 'from-cyan-500 to-blue-500' },
     { id: 'employees', label: 'Team Matrix', icon: Users, color: 'from-purple-500 to-pink-500' },
     { id: 'customers', label: 'User Analytics', icon: Globe, color: 'from-green-500 to-emerald-500' },
     { id: 'payments', label: 'Payment Core', icon: CreditCard, color: 'from-yellow-500 to-orange-500' },
@@ -242,6 +244,7 @@ export default function SuperAdminDashboard() {
                 transition={{ duration: 0.3 }}
               >
                 {activeSection === 'overview' && <OverviewSection stats={stats} loading={loading} darkMode={darkMode} />}
+                {activeSection === 'platform-status' && <PlatformStatus />}
                 {activeSection === 'employees' && <EmployeeManagement />}
                 {activeSection === 'payments' && <PaymentGateways />}
                 {activeSection === 'vault' && <CallRecordingVault />}
