@@ -144,8 +144,8 @@ export default function Contact() {
                     <div>
                       <h3 className="font-semibold mb-1">Office Address</h3>
                       <p className="text-muted-foreground text-sm">
-                        EchoFort Technologies Pvt. Ltd.<br />
-                        Bangalore, Karnataka, India
+                        Echofort Technology<br />
+                        Chennai, Tamil Nadu
                       </p>
                     </div>
                   </div>

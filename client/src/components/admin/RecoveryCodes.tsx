@@ -128,7 +128,7 @@ Store them in a password manager or print and keep in a safe place.
             </div>
 
             <div class="footer">
-              <p>EchoFort Technologies | Confidential</p>
+              <p>Echofort Technology | Confidential</p>
               <p>Store this document in a safe place or use a password manager</p>
             </div>
           </body>
